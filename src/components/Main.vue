@@ -12,10 +12,11 @@
         </van-grid>
         <van-grid clickable :column-num="2">
             <van-grid-item icon="home-o" text="流程" to="/process" />
-            <van-grid-item icon="search" text="生产计划" to="/plan" />
+            <van-grid-item icon="search" text="生产计划" to="/produce" />
         </van-grid>
         <van-grid clickable :column-num="2">
             <van-grid-item icon="home-o" text="代办" to="/todo" />
+            <van-grid-item icon="search" text="账号" to="/account" />
         </van-grid>
     </div>
 </template>

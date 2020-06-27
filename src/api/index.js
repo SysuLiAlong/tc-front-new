@@ -7,7 +7,10 @@ export default {
   },
   user: {
     changePassword: base_url + 'user/change_password',
-    options: base_url + 'user/options'
+    options: base_url + 'user/options',
+    page: base_url + 'user/page',
+    detail: base_url + 'user/detail/',
+    delete: base_url + 'user/delete/',
   },
   process: {
     add: base_url + 'process/add',

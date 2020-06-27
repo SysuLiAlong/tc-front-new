@@ -7,7 +7,17 @@
       @click-left="onClickLeft"
       @click-right="createProduct"
     />
-    <van-search v-model="name" placeholder="产品名称(可模糊搜索)"/>
+    <van-search
+      v-model="name"
+      show-action
+      label="产品名称"
+      placeholder="请输入搜索关键词"
+      @search="loadProduct"
+    >
+      <template #action>
+        <div @click="loadProduct">搜索</div>
+      </template>
+    </van-search>
     <van-list>
       <div v-for="(item,index) in productList"
         @click="detail(item.id)"

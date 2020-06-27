@@ -7,8 +7,18 @@
             @click-left="onClickLeft"
             @click-right="createMaterial"
         />
-        <van-search v-model="code" placeholder="材料编码(可模糊搜索)"/>
-        <van-list>
+      <van-search
+        v-model="code"
+        show-action
+        label="材料编码"
+        placeholder="请输入搜索关键词"
+        @search="getMaterial"
+      >
+        <template #action>
+          <div @click="getMaterial">搜索</div>
+        </template>
+      </van-search>
+      <van-list>
           <van-cell v-for="item in materialList">
             <div>
               <span class="code">{{item.code}}</span>

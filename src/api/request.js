@@ -146,6 +146,14 @@ const detailProduct = (productId) => {
     method: 'get'
   })
 }
+
+const pageQryAccount = (pageQryParam) => {
+  return instance({
+    url: api.user.page,
+    method: 'post',
+    data: pageQryParam
+  })
+}
 export default {
   login,
   listMaterial,
@@ -164,5 +172,6 @@ export default {
   updateProduct,
   deleteProduct,
   pageQryProduct,
-  detailProduct
+  detailProduct,
+  pageQryAccount
 }

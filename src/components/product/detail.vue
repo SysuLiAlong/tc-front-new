@@ -59,8 +59,8 @@
     <van-dialog
       v-model="showMaterail" title="添加材料" show-cancel-button
       @open="loadMaterialTypes"
+      :before-close="beforeCloseMaterial"
       @close="initMaterial"
-      @confirm="saveMaterial"
     >
       <div style="text-align: center">
         <select class="mySelect materialSelect"
@@ -99,7 +99,8 @@
       v-model="showRule" title="增加规则" show-cancel-button
       @open="loadRule"
       @close="initRule"
-      @confirm="saveRule">
+      :before-close="beforeCloseRule"
+      >
       <van-cell title="流程">
         <select v-model="ruleProcess" id="processId" class="mySelect">
           <option value="">请选择流程</option>
@@ -249,18 +250,29 @@
       addMaterial () {
         this.showMaterail = true
       },
-      saveMaterial () {
-        console.log('this.materialList',this.materialList)
-        let typeArr = this.selectedMaterialType.split(",",2)
-        let materialArr = this.selectedMaterial.split(",",2)
-        let newItem = {
-          code: materialArr[1],
-          id: materialArr[0],
-          type: typeArr[0],
-          typeName: typeArr[1]
-        }
-        if (!this.containChecked(this.materialList, newItem)) {
-          this.materialList.push(newItem)
+      beforeCloseMaterial (action, done) {
+        if (action == "confirm") {
+          if (this.selectedMaterialType == "" || this.selectedMaterial == "") {
+            Toast("请选择材料和材料类型再保存！")
+            done(false)
+            return
+          }
+          let typeArr = this.selectedMaterialType.split(",",2)
+          let materialArr = this.selectedMaterial.split(",",2)
+          let newItem = {
+            code: materialArr[1],
+            id: materialArr[0],
+            type: typeArr[0],
+            typeName: typeArr[1]
+          }
+          if (!this.containChecked(this.materialList, newItem)) {
+            this.materialList.push(newItem)
+            done(true)
+          } else {
+            done(false)
+          }
+        } else {
+          done(true)
         }
       },
       loadMaterialTypes () {
@@ -339,26 +351,34 @@
       onDeleteRule (index) {
         this.ruleList.splice(index, 1)
       },
-      saveRule () {
-        if (this.ruleProcess == "" || this.ruleInterval == null) {
-          Toast.fail("请填写完整表单！")
-          return
-        } else {
-          let procName = null
-          this.allProcess.forEach(process => {
-            if (process.id == this.ruleProcess) {
-              procName = process.name
-              return
+      beforeCloseRule (action, done) {
+        if (action == "confirm") {
+          if (this.ruleProcess == "" || this.ruleInterval == null) {
+            Toast("请填写完整表单！")
+            done(false)
+            return
+          } else {
+            let procName = null
+            this.allProcess.forEach(process => {
+              if (process.id == this.ruleProcess) {
+                procName = process.name
+                return
+              }
+            })
+            let rule = {
+              procId: this.ruleProcess,
+              procName: procName,
+              intervals: this.ruleInterval
             }
-          })
-          let rule = {
-            procId: this.ruleProcess,
-            procName: procName,
-            intervals: this.ruleInterval
+            if (!this.containChecked(this.ruleList, rule, 'procId')) {
+              this.ruleList.push(rule)
+              done(true)
+            } else {
+              done(false)
+            }
           }
-          if (!this.containChecked(this.ruleList, rule, 'procId')) {
-            this.ruleList.push(rule)
-          }
+        } else {
+          done(true)
         }
       },
       editProcess () {

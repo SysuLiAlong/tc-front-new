@@ -56,6 +56,21 @@ const routes = [
     component: () => import('../components/product/detail')
   },
   {
+    path: '/produce',
+    name: 'produce',
+    component: () => import('../components/produce/list')
+  },
+  {
+    path: '/produce/add',
+    name: 'produceAdd',
+    component: () => import('../components/produce/add')
+  },
+  {
+    path: '/produce/detail',
+    name: 'produceDetail',
+    component: () => import('../components/produce/detail')
+  },
+  {
     path: '/test/select',
     name: 'testSelect',
     component: () => import('../components/test/SelectTest')
@@ -69,6 +84,11 @@ const routes = [
     path: '/test/check_box',
     name: 'checkBox',
     component: () => import('../components/test/CheckBoxTest')
+  },
+  {
+    path: '/account',
+    name: 'account',
+    component: () => import('../components/Account')
   }
 
 
