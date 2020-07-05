@@ -20,7 +20,9 @@ export default {
     add: base_url + 'process/add',
     update: base_url + 'process/update',
     list: base_url + 'process/list',
-    delete: base_url + 'process/delete/'
+    delete: base_url + 'process/delete/',
+    detail: base_url + 'process/detail/',
+    exChangePriority: base_url + 'process/exchange/priority'
   },
   material: {
     // eslint-disable-next-line camelcase

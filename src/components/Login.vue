@@ -25,7 +25,7 @@
             />
             <van-checkbox v-model="checked" style="margin-top: 20px;margin-left: 20px">记住密码</van-checkbox>
             <div style="margin: 16px;">
-                <van-button round block type="info" native-type="submit">
+                <van-button block type="info" native-type="submit">
                     提交
                 </van-button>
             </div>

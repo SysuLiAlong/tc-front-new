@@ -19,29 +19,18 @@
       </template>
     </van-search>
     <van-list>
-      <div v-for="(item,index) in productList"
-        @click="detail(item.id)"
-        @touchstart.prevent="touchIn(item)"
-        @touchend.prevent="clearTime(item)">
-        <van-cell
-          :title="item.code"
-          :value="item.name"/>
-      </div>
+      <p v-for="(item,index) in productList">
+        <span style="display: inline-block;margin-left: 4%;width: 40%;color: #1989fa; text-decoration:underline"
+              @click="detail(item.id)">{{item.code}}</span>
+        <span style="display: inline-block;margin-right: 4%;float: right">{{item.name}}</span>
+      </p>
+      <van-divider></van-divider>
     </van-list>
 
     <div style="width: 100%;margin-top: 10px">
       <van-button color="#1E38FA" size="small" style="float: left; margin-left: 15%" @click="lastPage">上一页</van-button>
       <van-button color="#1E38FA" size="small" style="float: right; margin-right: 15%" @click="nextPage">下一页</van-button>
     </div>
-
-    <van-overlay :show="show">
-      <div class="wrapper" @click="show = false">
-        <div class="block" @click.stop>
-          <p @click="editProduct">编辑</p>
-          <p @click="deleteProduct">删除</p>
-        </div>
-      </div>
-    </van-overlay>
   </div>
 </template>
 
@@ -53,17 +42,13 @@
     name: 'Product',
     data () {
       return {
-        productList: [
-          {code: 'a', name: 'A'},{code: 'b', name: 'B'},{code: 'c', name: 'C'}
-        ],
+        productList: [],
         page: {
           pageNo: 1,
           pageSize: 10,
           total: 0,
         },
         name: null,
-        show: false,
-        row: null
       }
     },
     methods : {
@@ -97,40 +82,14 @@
             }
           })
       },
-      initRow () {
-        this.show = false
-        this.row = null
-      },
       onClickLeft () {
         this.$router.back()
       },
       createProduct () {
         this.$router.push({name: 'productDetail'})
       },
-      editProduct () {
-        console.log(this.row)
-        this.$router.push({name: 'productDetail',params: {productId: this.row.id}})
-        this.initRow()
-      },
-      deleteProduct () {
-        console.log(this.row)
-        request.deleteProduct(this.row.id)
-        this.loadProduct()
-        this.initRow()
-      },
       detail (productId) {
         this.$router.push({name: 'productDetail',params: {productId: productId}})
-      },
-      touchIn(item) {
-        clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
-        this.Loop = setTimeout(function() {
-          this.show = true
-          this.row = item
-        }.bind(this), 1000);
-      },
-      clearTime(index) {
-        // 这个方法主要是用来将每次手指移出之后将计时器清零
-        clearInterval(this.Loop);
       },
       lastPage () {
         if (this.page.pageNo <= 1) {

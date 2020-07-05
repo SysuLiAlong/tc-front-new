@@ -54,7 +54,11 @@
     <van-button size="small" class="leftButton" @click="addRule">增加规则</van-button>
     <van-divider>其他</van-divider>
     <textarea v-model="product.description" class="textarea-inherit" rows="3"></textarea>
-
+    <div style="margin: 3px 50px 10px 50px;" v-show="!isAdd">
+      <van-button block type="danger" @click="deleteProduct">
+        删除
+      </van-button>
+    </div>
     <!--弹窗-->
     <van-dialog
       v-model="showMaterail" title="添加材料" show-cancel-button
@@ -130,6 +134,7 @@
     name: 'Product',
     data () {
       return {
+        productId: '',
         isAdd: true,
         materialList: [],
         processList: [],
@@ -154,6 +159,7 @@
     },
     methods : {
       initData () {
+        this.productId = ''
         this.isAdd = true
         this.materialList = []
         this.processList = []
@@ -185,6 +191,17 @@
           .catch(() => {
 
           });
+      },
+      deleteProduct () {
+        request.deleteProduct(this.productId)
+          .then(res => {
+            if (res.code === 0) {
+              Toast("删除成功！")
+              this.$router.back()
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
       },
       saveProduct () {
         let processArr = []
@@ -392,6 +409,7 @@
       this.initData()
       let productId = this.$route.params.productId
       if (productId !== null && productId !== undefined) {
+        this.productId = productId
         this.isAdd = false
         request.getProductDetail(productId)
           .then(res => {

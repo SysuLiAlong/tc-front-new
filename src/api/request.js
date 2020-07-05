@@ -71,11 +71,10 @@ const updateProcess = (data) => {
   })
 }
 
-const userOptions = (roleId) => {
+const userOptions = () => {
   return instance({
     url: api.user.options,
     method: 'get',
-    params: {roleId: roleId}
   })
 }
 
@@ -306,6 +305,24 @@ const addAccount = (accountParam) => {
     data: accountParam
   })
 }
+
+const processDetail = (processsId) => {
+  return instance({
+    url: api.process.detail + processsId,
+    method: 'get'
+  })
+}
+
+const exChangePriority = (first,second) => {
+  return instance({
+    url: api.process.exChangePriority,
+    method: 'get',
+    params: {
+      first: first,
+      second: second
+    }
+  })
+}
 export default {
   login,
   listMaterial,
@@ -345,5 +362,7 @@ export default {
   updateAccount,
   resetPasswd,
   deleteAccount,
-  addAccount
+  addAccount,
+  processDetail,
+  exChangePriority
 }

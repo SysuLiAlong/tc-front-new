@@ -33,7 +33,12 @@ const routes = [
   {
     path: '/process',
     name: 'process',
-    component: () => import('../components/Process')
+    component: () => import('../components/process/list')
+  },
+  {
+    path: '/process/detail',
+    name: 'processDetail',
+    component: () => import('../components/process/detail')
   },
   {
     path: '/test/touch',

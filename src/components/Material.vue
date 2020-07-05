@@ -23,7 +23,7 @@
             <div>
               <span class="code">{{item.code}}</span>
               <span class="typeName">{{item.typeName}}</span>
-              <van-button size="small" round class="delete" @click="onDelete(item.id)">删除</van-button>
+              <van-button size="small" class="delete" @click="onDelete(item.id)">删除</van-button>
             </div>
           </van-cell>
         </van-list>
