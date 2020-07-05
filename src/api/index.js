@@ -11,6 +11,10 @@ export default {
     page: base_url + 'user/page',
     detail: base_url + 'user/detail/',
     delete: base_url + 'user/delete/',
+    all: base_url + 'user/all',
+    update: base_url + 'user/update',
+    resetPasswd: base_url + 'user/reset_password',
+    add: base_url + 'user/add'
   },
   process: {
     add: base_url + 'process/add',
@@ -33,6 +37,22 @@ export default {
     add: base_url + 'product/add',
     update: base_url + 'product/update',
     delete: base_url + 'product/delete/',
-    page: base_url + 'product/page'
+    page: base_url + 'product/page',
+    options: base_url + 'product/options'
+  },
+  produce: {
+    pageQry: base_url + 'produce/page_qry',
+    add: base_url + 'produce/add',
+    addMsg: base_url + 'produce/msg/add',
+    listProduceProcess: base_url + 'produce/process/{produceId}',
+    listProduceMsg: base_url + 'produce/msg/{produceId}',
+    detail: base_url + 'produce/detail/{produceId}',
+    accept: base_url + 'produce/process/accept',
+    reject: base_url + 'produce/process/reject',
+    transmit: base_url + 'produce/process/transmit',
+    nextProduceProcess: base_url + 'produce/process/next/{produceId}',
+    currentProduceProcess: base_url + 'produce/process/current/{produceId}',
+    lastProduceProcess: base_url + 'produce/process/last/{produceId}',
+    delete: base_url + 'produce/delete/{produceId}'
   }
 }

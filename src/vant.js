@@ -20,7 +20,8 @@ import {
   Tabbar,
   TabbarItem,
   Toast,
-  CheckboxGroup
+  CheckboxGroup,
+  Icon
 } from 'vant'
 
 Vue.use(NavBar)
@@ -42,3 +43,4 @@ Vue.use(Picker)
 Vue.use(Overlay)
 Vue.use(Divider)
 Vue.use(CheckboxGroup)
+Vue.use(Icon);

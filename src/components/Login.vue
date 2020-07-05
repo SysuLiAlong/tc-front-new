@@ -51,7 +51,6 @@ export default {
         .then(res => {
           if (res.code === 0) {
             localStorage.setItem('userInfo', JSON.stringify(res.data))
-            localStorage.setItem('isLogin', true)
             this.$router.push({name: 'main'})
           } else {
             Toast(res.msg)

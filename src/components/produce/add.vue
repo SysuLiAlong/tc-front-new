@@ -13,8 +13,8 @@
         <option value="">请选择产品</option>
         <option
           v-for="item in productList"
-          :value="item.code">
-          {{item.name}}
+          :value="item.value">
+          {{item.label}}
         </option>
       </select>
     </van-cell>
@@ -24,11 +24,14 @@
         <van-button size="small" type="primary" @click="editable = !editable">{{editable ? '保存' : '编辑'}}</van-button>
       </template>
     </van-field>
-    <textarea v-model="produceParam.description" :disabled=!editable class="textarea-inherit"  rows="5"></textarea>
+    <textarea v-model="produceParam.content" :disabled=!editable class="textarea-inherit"  rows="5"></textarea>
   </div>
 </template>
 
 <script>
+
+  import request from '../../api/request'
+  import Toast from 'vant/lib/toast'
 
   export default {
     name: 'add',
@@ -41,19 +44,53 @@
           description: ""
         },
         productList: [],
-        editable: false
+        editable: false,
+        isSaved: false,
       }
     },
     methods: {
       initData () {
-        this.productList.push({code: 1,name: 1})
+        this.editable = false
+        this.isSaved = false
+        this.produceParam = {
+          orderCode: "",
+          productCode: "",
+          stove: null,
+          description: ""
+        }
+      },
+      loadProductOptions () {
+        request.productOptions()
+          .then(res => {
+            if (res.code === 0) {
+              this.productList = res.data
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
       },
       onClickLeft () {
         this.$router.back()
       },
       saveProduce () {
-
+        if (this.isSaved) {
+          Toast.fail("您已经保存了，如需修改，请先返回再进行修改！")
+          return
+        }
+        request.addProduce(this.produceParam)
+          .then(res => {
+            if (res.code === 0) {
+              this.isSaved = true
+              Toast("保存成功")
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
       },
+    },
+    created () {
+      this.initData()
+      this.loadProductOptions()
     }
   }
 </script>

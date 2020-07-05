@@ -28,7 +28,7 @@ AxiosInstance.interceptors.response.use(
       if (response.data.code === -4) {
         Toast("未认证，请重新登陆！")
         router.push({name: 'login'})
-        return
+        return Promise.reject("未认证，请重新登陆！")
       }
       return response.data
     } else {

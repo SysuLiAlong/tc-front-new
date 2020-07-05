@@ -88,7 +88,17 @@ const routes = [
   {
     path: '/account',
     name: 'account',
-    component: () => import('../components/Account')
+    component: () => import('../components/account/list')
+  },
+  {
+    path: '/account/detail',
+    name: 'accountDetail',
+    component: () => import('../components/account/detail')
+  },
+  {
+    path: '/account/add',
+    name: 'addAccount',
+    component: () => import('../components/account/add')
   }
 
 

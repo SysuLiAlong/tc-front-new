@@ -5,9 +5,9 @@ const login = (userName,password) => {
     return instance({
         url: api.auth.login,
         method: 'post',
-        params:{
-            userName: userName,
-            password: password
+        data: {
+          userName: userName,
+          password: password
         }
     })
 }
@@ -147,11 +147,163 @@ const detailProduct = (productId) => {
   })
 }
 
+const productOptions = () => {
+  return instance({
+    url: api.product.options,
+    method: 'get'
+  })
+}
+
 const pageQryAccount = (pageQryParam) => {
   return instance({
     url: api.user.page,
     method: 'post',
     data: pageQryParam
+  })
+}
+
+const pageQryProduce = (queryParam) => {
+  return instance({
+    url: api.produce.pageQry,
+    method: 'post',
+    data: queryParam
+  })
+}
+
+const addProduce = (data) => {
+  return instance({
+    url: api.produce.add,
+    method: 'post',
+    data: data
+  })
+}
+
+const deleteProduce = (produceId) => {
+  return instance({
+    url: api.produce.delete.replace("{produceId}",produceId),
+    method: 'post',
+  })
+}
+
+const addProduceMsg = (data) => {
+  return instance({
+    url: api.produce.addMsg,
+    method: 'post',
+    data: data
+  })
+}
+
+const listProduceProcess = (produceId) => {
+  return instance({
+    url: api.produce.listProduceProcess.replace("{produceId}",produceId),
+    method: 'get'
+  })
+}
+
+const listProduceMsg = (produceId) => {
+  return instance({
+    url: api.produce.listProduceMsg.replace("{produceId}",produceId),
+    method: 'get'
+  })
+}
+
+const detailProduce = (produceId) => {
+  return instance({
+    url: api.produce.detail.replace("{produceId}",produceId),
+    method: 'get'
+  })
+}
+
+const acceptProduce = (data) => {
+  return instance({
+    url: api.produce.accept,
+    method: 'post',
+    data: data
+  })
+}
+
+const rejectProduce = (data) => {
+  return instance({
+    url: api.produce.reject,
+    method: 'post',
+    data: data
+  })
+}
+
+const transmitProduce = (data) => {
+  return instance({
+    url: api.produce.transmit,
+    method: 'post',
+    data: data
+  })
+}
+
+const getLastProduceProcess = (produceId) => {
+  return instance({
+    url: api.produce.lastProduceProcess.replace("{produceId}",produceId),
+    method: 'get'
+  })
+}
+
+const getCurrentProduceProcess = (produceId) => {
+  return instance({
+    url: api.produce.currentProduceProcess.replace("{produceId}",produceId),
+    method: 'get'
+  })
+}
+
+const getNextProduceProcess = (produceId) => {
+  return instance({
+    url: api.produce.nextProduceProcess.replace("{produceId}",produceId),
+    method: 'get'
+  })
+}
+
+const getAllUser = () => {
+  return instance({
+    url: api.user.all,
+    method: 'get'
+  })
+}
+
+const accountDetail = (accountId) => {
+  return instance({
+    url: api.user.detail + accountId,
+    method: 'get'
+  })
+}
+
+const updateAccount = (data) => {
+  return instance({
+    url: api.user.update,
+    method: 'post',
+    data: data
+  })
+}
+
+const resetPasswd = (accountId,newPassword) => {
+  return instance({
+    url: api.user.resetPasswd,
+    method: 'post',
+    data: {
+      newPassword: newPassword,
+      userId: accountId
+    }
+  })
+}
+
+const deleteAccount = (accountId) => {
+  return instance({
+    url: api.user.delete + accountId,
+    method: 'post'
+  })
+}
+
+const addAccount = (accountParam) => {
+  return instance({
+    url: api.user.add,
+    method: 'post',
+    data: accountParam
   })
 }
 export default {
@@ -173,5 +325,25 @@ export default {
   deleteProduct,
   pageQryProduct,
   detailProduct,
-  pageQryAccount
+  productOptions,
+  pageQryAccount,
+  pageQryProduce,
+  addProduce,
+  deleteProduce,
+  addProduceMsg,
+  listProduceProcess,
+  listProduceMsg,
+  detailProduce,
+  acceptProduce,
+  rejectProduce,
+  transmitProduce,
+  getLastProduceProcess,
+  getCurrentProduceProcess,
+  getNextProduceProcess,
+  getAllUser,
+  accountDetail,
+  updateAccount,
+  resetPasswd,
+  deleteAccount,
+  addAccount
 }

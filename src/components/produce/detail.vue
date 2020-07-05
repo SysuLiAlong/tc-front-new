@@ -1,15 +1,432 @@
 <template>
     <div>
-      <h1>produceDetail</h1>
+      <van-nav-bar
+        title="生产计划"
+        left-text= "返回"
+        :right-text= "isCommonUser ? null : '删除'"
+        @click-left="onClickLeft"
+        @click-right="isCommonUser ? null : deleteProduce"
+      />
+      <div>
+        <p>
+          <span
+            style="margin-left: 3%; display: inline-block; width: 40%;"
+          >
+            单号：{{produceDetail.code}}
+          </span>
+          <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
+            订单号：{{produceDetail.orderCode}}
+          </span>
+        </p>
+        <p>
+          <span
+            style="margin-left: 3%; display: inline-block; width: 40%;">
+            产品：{{produceDetail.productCode}}
+          </span>
+          <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
+            计划数量：{{produceDetail.stove}}
+          </span>
+        </p>
+        <p>
+          <span
+            style="margin-left: 3%; display: inline-block; width: 40%; ">
+            当前流程：{{produceDetail.produceProcessName}}
+          </span>
+          <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
+            负责人：{{produceDetail.processChargeUserName}}
+          </span>
+        </p>
+      </div>
+      <van-divider>流程</van-divider>
+      <van-list>
+        <div v-for="item in produceProcess">
+          <p>
+            <span
+              style="margin-left: 3%; display: inline-block; width: 25%;"
+            >
+              名称：{{item.processName}}
+            </span>
+            <span style="margin-left: 3%;margin-right: 3%; display: inline-block; width: 35%">
+              接收时间：{{item.startTime}}
+            </span>
+            <span style="margin-left: 3%;margin-right: 3%; display: inline-block; width: 20%">
+              数量：{{item.startNum}}
+            </span>
+          </p>
+          <p>
+            <span
+              style="margin-left: 3%; display: inline-block; width: 25%;"
+            >
+              负责人：{{item.chargeUserName}}
+            </span>
+            <span style="margin-left: 3%;margin-right: 3%; display: inline-block; width: 35%">
+              完成时间：{{item.endTime}}
+            </span>
+            <span style="margin-left: 3%;margin-right: 3%; display: inline-block; width: 20%">
+              数量：{{item.endNum}}
+            </span>
+          </p>
+          <van-divider></van-divider>
+        </div>
+      </van-list>
+      <van-divider>信息</van-divider>
+      <van-list>
+        <div
+          v-for="item in produceMsg"
+          style="border: 1px solid black;padding: 5px;margin-left: 3%;margin-right: 3%;margin-top: 5px">
+          <span>{{item.createTime}}</span><br>
+          <span style="margin-top: 3px">{{item.content}}</span>
+        </div>
+      </van-list>
+
+      <div style="width: 100%;margin-top: 10px;margin-bottom: 10px">
+        <van-button color="#1E38FA" size="small" style="margin-left: 5%" @click="addMsg">添加信息</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 5%" :disabled="!isEnd" @click="acceptProcess">接受</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 5%" :disabled="!isEnd" @click="rejectProcess">退回</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 5%" :disabled="isEnd" @click="transmitProcess">转交</van-button>
+      </div>
+
+      <van-dialog
+        v-model="showAddMsg" title="添加信息" show-cancel-button
+        :before-close="beforeCloseMsg"
+        @close="loadProduceMsg"
+      >
+        <div style="text-align: center">
+          <textarea v-model="content" class="textarea-inherit" rows="5"/>
+        </div>
+      </van-dialog>
+
+      <van-dialog
+        v-model="showAccept" title="接收" show-cancel-button
+        :before-close="beforeCloseAccept"
+        @close="loadProduceMsg"
+      >
+        <div style="text-align: center">
+          <p>来自：{{lastProcess.processName}}</p>
+          <p>完成数量：{{lastProcess.endNum}}</p>
+        </div>
+      </van-dialog>
+
+      <van-dialog
+        v-model="showReject" title="退回" show-cancel-button
+        :before-close="beforeCloseReject"
+        @close="loadProduceMsg"
+      >
+        <div style="text-align: center">
+          <p>来自：{{lastProcess.processName}}</p>
+          <p>完成数量：{{lastProcess.endNum}}</p>
+        </div>
+      </van-dialog>
+
+      <van-dialog
+        v-model="showTransmit" title="转交" show-cancel-button
+        :before-close="beforeCloseTransmit"
+        @close="closeTransmit"
+      >
+        <div style="text-align: center">
+          <div style="text-align: center">
+            <p>转交至：{{nextProcess.processName}}</p>
+            <p>完成数量：<input type="number" v-model="fulfillNum" ></p>
+          </div>
+        </div>
+      </van-dialog>
+
     </div>
 </template>
 
 <script>
+  import request from '../../api/request'
+  import Toast from 'vant/lib/toast'
+  import {role} from './../../constant'
+
   export default {
-    name: 'detail'
+    name: 'detail',
+    data () {
+      return {
+        userInfo: {},
+        isCommonUser: true,
+        showAddMsg: false,
+        showAccept: false,
+        showReject: false,
+        showTransmit: false,
+        produceId: '',
+        produceDetail: {
+
+        },
+        produceProcess:[],
+        produceMsg: [],
+        lastProcess: {},
+        currentProcess: {},
+        nextProcess: {},
+        fulfillNum: '',
+        content: ''
+      }
+    },
+    computed: {
+      isEnd: function () {
+        console.log(this.lastProcess)
+        console.log(this.lastProcess.status)
+        console.log(this.lastProcess.status === 3)
+        return this.lastProcess.status === 3
+      }
+    },
+    methods: {
+      initData () {
+        this.produceId = ''
+        this.produceDetail = {}
+        this.produceProcess = []
+        this.produceMsg = []
+      },
+      loadProduceDetal () {
+        if (this.produceId !== null && this.produceId !== undefined) {
+          request.detailProduce(this.produceId)
+            .then(res => {
+              if(res.code === 0) {
+                this.produceDetail = res.data
+              } else {
+                Toast(res.msg)
+              }
+            })
+        } else {
+          Toast.fail("数据异常，请返回重试！")
+        }
+      },
+      loadProduceProcess () {
+        if (this.produceId !== null && this.produceId !== undefined) {
+          request.listProduceProcess(this.produceId)
+            .then(res => {
+              if(res.code === 0) {
+                res.data.forEach(item => {
+                  item.startTime = this.processDateFormat(item.startTime)
+                  item.endTime = this.processDateFormat(item.endTime)
+                })
+                this.produceProcess = res.data
+              } else {
+                Toast(res.msg)
+              }
+            })
+        } else {
+          Toast.fail("数据异常，请返回重试！")
+        }
+      },
+      loadProduceMsg () {
+        if (this.produceId !== null && this.produceId !== undefined) {
+          request.listProduceMsg(this.produceId)
+            .then(res => {
+              if(res.code === 0) {
+                res.data.forEach(item => {
+                  item.createTime = this.msgDateFormat(item.createTime)
+                })
+                this.produceMsg = res.data
+              } else {
+                Toast(res.msg)
+              }
+            })
+        } else {
+          Toast.fail("数据异常，请返回重试！")
+        }
+      },
+      onClickLeft () {
+        this.$router.back()
+      },
+      deleteProduce () {
+        request.deleteProduce(this.produceId)
+          .then(res => {
+            if (res.code === 0) {
+              Toast("删除成功")
+              this.$router.back()
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
+      },
+      loadLastProcess () {
+        request.getLastProduceProcess(this.produceId)
+          .then(res => {
+            if (res.code === 0) {
+              this.lastProcess = res.data
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
+      },
+      loadCurrentProcess () {
+        request.getCurrentProduceProcess(this.produceId)
+          .then(res => {
+            if (res.code === 0) {
+              this.currentProcess = res.data
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
+      },
+      loadNextProcess () {
+        request.getNextProduceProcess(this.produceId)
+          .then(res => {
+            if (res.code === 0) {
+              this.nextProcess = res.data
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
+      },
+      addMsg () {
+        this.showAddMsg = true
+      },
+      beforeCloseMsg (action, done) {
+        if (action == 'confirm') {
+          let produceMsg = {
+            produceId: this.produceId,
+            content: this.content,
+            type: 1
+          }
+          request.addProduceMsg(produceMsg)
+            .then(res => {
+              if (res.code === 0) {
+                Toast("添加信息成功！")
+                done(true)
+              } else {
+                Toast.fail(res.msg)
+                done(false)
+              }
+            })
+        } else {
+          done(true)
+        }
+      },
+      acceptProcess () {
+        this.showAccept = true
+      },
+      beforeCloseAccept (action,done) {
+        if (action == 'confirm') {
+          let param = {
+            produceMsgEntity: {
+              produceId: this.produceId,
+              type: 2
+            },
+            produceProcessEntity: this.lastProcess
+          }
+          request.acceptProduce(param)
+            .then(res => {
+              if (res.code === 0) {
+                Toast("接收成功！")
+                done(true)
+              } else {
+                Toast.fail({
+                  position: 'top',
+                  message: res.msg
+                })
+                done(false)
+              }
+            })
+        } else {
+          done(true)
+        }
+      },
+      rejectProcess () {
+        this.showReject = true
+      },
+      beforeCloseReject (action,done) {
+        if (action == 'confirm') {
+          let param = {
+            produceMsgEntity: {
+              produceId: this.produceId,
+              type: 3
+            },
+            produceProcessEntity: this.lastProcess
+          }
+          request.rejectProduce(param)
+            .then(res => {
+              if (res.code === 0) {
+                Toast("回退成功！")
+                done(true)
+              } else {
+                Toast.fail({
+                  position: 'top',
+                  message: res.msg
+                })
+                done(false)
+              }
+            })
+        } else {
+          done(true)
+        }
+      },
+      transmitProcess () {
+        this.showTransmit = true
+      },
+      beforeCloseTransmit () {
+        if (action == 'confirm') {
+          let param = {
+            produceMsgEntity: {
+              produceId: this.produceId,
+              amount: this.fulfillNum,
+              type: 4
+            },
+            produceProcessEntity: this.currentProcess
+          }
+          request.transmitProduce(param)
+            .then(res => {
+              if (res.code === 0) {
+                done(true)
+                Toast("转交成功！")
+              } else {
+                Toast.fail({
+                  position: 'top',
+                  message: res.msg
+                })
+                done(false)
+              }
+            })
+        } else {
+          done(true)
+        }
+      },
+      closeTransmit () {
+        this.fulfillNum = null
+        this.loadProduceMsg()
+      },
+      msgDateFormat (timestamps) {
+        let date = new Date(timestamps);
+        let Y = date.getFullYear() + '年';
+        let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '月';
+        let D = date.getDate() + '日 ';
+        let h = date.getHours() + ':';
+        let m = date.getMinutes();
+        return (Y+M+D+h+m);
+      },
+      processDateFormat (timestamps) {
+        if (timestamps) {
+          let date = new Date(timestamps);
+          let D = date.getDate() + '日 ';
+          let h = date.getHours() + ':';
+          let m = date.getMinutes();
+          return (D+h+m);
+        } else {
+          return ''
+        }
+      }
+    },
+    created () {
+      this.initData()
+      this.userInfo = JSON.parse(localStorage.getItem("userInfo"))
+      this.isCommonUser = this.userInfo.roleId == role.commonUser ? true : false
+      this.produceId = this.$route.params.produceId
+      this.loadProduceDetal()
+      this.loadLastProcess()
+      this.loadCurrentProcess()
+      this.loadNextProcess()
+      this.loadProduceProcess()
+      this.loadProduceMsg()
+    }
   }
 </script>
 
 <style scoped>
-
+  .textarea-inherit {
+    width: 80%;
+    margin: 3px;
+    padding: 3px;
+    overflow: auto;
+  }
 </style>

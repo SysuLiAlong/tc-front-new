@@ -45,7 +45,7 @@
         <van-cell>
           <div>
             <span class="label">{{item.procName}}</span>
-            <span class="content">{{item.interval}}</span>
+            <span class="content">{{item.intervals}}</span>
             <van-button size="small" class="delete" @click="onDeleteRule(index)">删除</van-button>
           </div>
         </van-cell>
@@ -192,7 +192,7 @@
         if (this.processList.length !== 0) {
           this.processList.forEach(process => {
             processArr.push({
-              procId: process.id
+              processId: process.id
             })
           })
         }
@@ -205,8 +205,8 @@
         }
         let detailParam = {
           productParam: this.product,
-          procRelationParams: processArr,
-          materialRelationParams: materialArr,
+          processParams: processArr,
+          materialParams: materialArr,
           ruleParams: this.ruleList
         }
         if (this.isAdd) {
@@ -250,7 +250,7 @@
       addMaterial () {
         this.showMaterail = true
       },
-      beforeCloseMaterial (action, done) {
+       beforeCloseMaterial (action, done) {
         if (action == "confirm") {
           if (this.selectedMaterialType == "" || this.selectedMaterial == "") {
             Toast("请选择材料和材料类型再保存！")
@@ -366,7 +366,7 @@
               }
             })
             let rule = {
-              procId: this.ruleProcess,
+              processId: this.ruleProcess,
               procName: procName,
               intervals: this.ruleInterval
             }

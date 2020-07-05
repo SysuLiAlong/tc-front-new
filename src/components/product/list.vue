@@ -3,7 +3,7 @@
     <van-nav-bar
       title="产品"
       left-text= "返回"
-      right-text= "新建材料"
+      right-text= "新建产品"
       @click-left="onClickLeft"
       @click-right="createProduct"
     />

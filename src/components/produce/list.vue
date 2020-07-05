@@ -3,12 +3,12 @@
     <van-nav-bar
       title="生产计划"
       left-text= "返回"
-      right-text= "新建计划"
+      :right-text= "isCommonUser ? null : '新建计划'"
       @click-left="onClickLeft"
       @click-right="createProduce"
     />
     <van-search
-      v-model="orderNum"
+      v-model="orderCode"
       show-action
       label="订单号"
       placeholder="请输入订单号"
@@ -16,10 +16,10 @@
     >
       <template #action>
         <div style="width: 120px">
-          <select name="order" class="orderSelect">
-            <option>默认排序</option>
-            <option>单号</option>
-            <option>订单号</option>
+          <select v-model="orderParam" class="orderSelect">
+            <option value="">默认排序</option>
+            <option value="code">单号</option>
+            <option value="order_code">订单号</option>
           </select>
           <span @click="loadProduce">搜索</span>
         </div>
@@ -32,20 +32,22 @@
             style="margin-left: 3%; display: inline-block; width: 40%; color: #1989fa; text-decoration:underline"
             @click="produceDetail(item)"
           >
-            {{item.produceNum}}
+            单号：{{item.code}}
           </span>
-          <span style="margin-left: 3%;margin-right: 3%; display: inline-block; width: 40%">
-            {{item.orderNum}}
+          <span style="margin-left: 1%;margin-right: 3%; display: inline-block; ">
+            订单号：{{item.orderCode}}
           </span>
         </p>
         <p>
           <span style="margin-left: 3%; display: inline-block; width: 40%">
-            {{item.productNum}}
+            产品：{{item.productCode}}
           </span>
-          <span style="margin-left: 3%; display: inline-block; width: 25%">
-            {{item.stove}}
+          <span style="margin-left: 1%; display: inline-block; width: 20%">
+            数量：{{item.stove}}
           </span>
-          <span style="margin-left: 3%; display: inline-block; width: 22%">{{item.process}}</span>
+          <span style="margin-left: 1%; display: inline-block;">
+            状态：{{item.produceProcessName}}
+          </span>
         </p>
         <van-divider></van-divider>
       </div>
@@ -60,18 +62,22 @@
 
 <script>
   import Toast from 'vant/lib/toast'
+  import request from '../../api/request'
 
   export default {
     name: 'list',
     data () {
       return {
+        userInfo: {},
+        isCommonUser: true,
         produceList: [],
         page: {
           pageNo: 1,
           pageSize: 5,
           total: 0,
         },
-        orderNum: '',
+        orderCode: '',
+        orderParam: "",
         option1: [
           { text: '全部商品', value: 0 },
           { text: '新款商品', value: 1 },
@@ -90,25 +96,35 @@
         }
       },
       loadProduce () {
-        this.produceList = []
-        for (let i = 0; i< 5; i++) {
-          let produce = {
-            produceNum: 'produceNum' + i,
-            orderNum: 'orderNum' + i,
-            productNum: 'productNum' + i,
-            stove: 'stove' + i,
-            process: '流程' + i
-          }
-          this.produceList.push(produce)
+        let pageParams = {
+          pageNo: this.page.pageNo,
+          pageSize: this.page.pageSize,
+          orderParam: this.orderParam,
+          orderCode: this.orderCode,
+          chargeUserName: this.userInfo.userName
         }
+        request.pageQryProduce(pageParams)
+          .then(res => {
+            if (res.code === 0) {
+              this.produceList = res.data.data
+              this.page.pageNo = res.data.pageNo
+              this.page.pageSize = res.data.pageSize
+              this.page.total = res.data.total
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
       },
       produceDetail (item) {
-        this.$router.push({name: 'produceDetail',params: {produceNum: item.produceNum}})
+        this.$router.push({name: 'produceDetail',params: {produceId: item.id}})
       },
       onClickLeft () {
         this.$router.back()
       },
       createProduce () {
+        if (this.isCommonUser) {
+          return
+        }
         this.$router.push({name: 'produceAdd'})
       },
       lastPage () {
@@ -116,7 +132,7 @@
           Toast("已经是第一页了！")
         } else {
           this.page.pageNo = this.page.pageNo - 1
-          this.loadProduct()
+          this.loadProduce()
         }
       },
       nextPage () {
@@ -124,11 +140,13 @@
           Toast("已经是最后一页了！")
         } else {
           this.page.pageSize = this.page.pageSize + 1
-          this.loadProduct()
+          this.loadProduce()
         }
       }
     },
     created () {
+      this.userInfo = JSON.parse(localStorage.getItem("userInfo"))
+      this.isCommonUser = this.userInfo.roleId == 3 ? true : false
       this.initData()
       this.loadProduce()
     }
