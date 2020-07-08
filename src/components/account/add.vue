@@ -9,23 +9,23 @@
       />
       <p>
         <span class="labelWidth">用户名：</span>
-        <input type="text" v-model="account.userName">
+        <input type="text" class="myInput" v-model="account.userName">
       </p>
       <p>
         <span class="labelWidth">密码：</span>
-        <input type="password" v-model="account.password">
+        <input type="password" class="myInput" v-model="account.password">
       </p>
       <p>
         <span class="labelWidth">确认密码：</span>
-        <input type="password" v-model="confirmPassword">
+        <input type="password" class="myInput" v-model="confirmPassword">
       </p>
       <p>
         <span class="labelWidth">姓名：</span>
-        <input type="text" v-model="account.realName">
+        <input type="text" class="myInput" v-model="account.realName">
       </p>
       <p>
         <span class="labelWidth">权限：</span>
-        <select v-model="account.role" style="width: 152px;padding: 1px 2px">
+        <select v-model="account.role" class="mySelect">
           <option :value="role.commonUser">{{role.commonUserName}}</option>
           <option :value="role.admin">{{role.adminName}}</option>
           <option :value="role.superAdmin">{{role.superAdminName}}</option>
@@ -124,5 +124,25 @@
     margin-left: 4%;
     width: 20%;
     display: inline-block;
+  }
+  .mySelect {
+    background:#fafdfe;
+    height:28px;
+    width:146px;
+    line-height:28px;
+    border:1px solid #9bc0dd;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+  }
+  .myInput {
+    background:#fafdfe;
+    height:24px;
+    width:140px;
+    padding-left: 5px;;
+    line-height:28px;
+    border:1px solid #9bc0dd;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
   }
 </style>

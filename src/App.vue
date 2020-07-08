@@ -24,6 +24,6 @@ export default {
   -webkit-flex: none;
   flex: none;
   box-sizing: border-box;
-  width: 120px;
+  width: 140px;
 }
 </style>

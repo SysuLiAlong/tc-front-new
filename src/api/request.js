@@ -1,13 +1,14 @@
 import instance from './instance'
 import api from './index'
 
-const login = (userName,password) => {
+const login = (userName,password,remember) => {
     return instance({
         url: api.auth.login,
         method: 'post',
         data: {
           userName: userName,
-          password: password
+          password: password,
+          remember: remember
         }
     })
 }
@@ -131,7 +132,6 @@ const deleteProduct = (productId) => {
 }
 
 const pageQryProduct = (pageQryParam) => {
-  console.log('pageQryParam',pageQryParam)
   return instance({
     url: api.product.page,
     method: 'post',
@@ -323,6 +323,14 @@ const exChangePriority = (first,second) => {
     }
   })
 }
+
+const logout = () => {
+  return instance({
+    url: api.user.logout,
+    method: 'post'
+  })
+}
+
 export default {
   login,
   listMaterial,
@@ -364,5 +372,6 @@ export default {
   deleteAccount,
   addAccount,
   processDetail,
-  exChangePriority
+  exChangePriority,
+  logout
 }

@@ -11,13 +11,14 @@
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit",
-    "build": "node build/build.js"
+    "build-dev": "node build/build.js --env dev",
+    "build-prod": "node build/build.js --env prod"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "vant": "^2.0.0",
     "vue": "^2.5.2",
-    "vue-infinite-scroll": "^2.0.2",
+    "vue-cookies": "^1.7.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

@@ -23,8 +23,8 @@
         <span style="display: inline-block;margin-left: 4%;width: 40%;color: #1989fa; text-decoration:underline"
               @click="detail(item.id)">{{item.code}}</span>
         <span style="display: inline-block;margin-right: 4%;float: right">{{item.name}}</span>
+        <van-divider></van-divider>
       </p>
-      <van-divider></van-divider>
     </van-list>
 
     <div style="width: 100%;margin-top: 10px">

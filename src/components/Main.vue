@@ -3,8 +3,9 @@
         <van-nav-bar
             title="主页"
             :left-text= "this.userInfo.realName"
+            right-text="退出"
             @click-left="toUserInfo"
-
+            @click-right="logout"
         />
         <div v-if="this.userInfo.role === role.commonUser">
           <van-grid clickable :column-num="1">
@@ -39,6 +40,8 @@
 
 <script>
   import {role} from './../constant'
+  import request from '../api/request'
+  import Toast from 'vant/lib/toast'
 
   export default {
     name: "Main",
@@ -49,17 +52,30 @@
       }
     },
     methods : {
-        jump() {
-            this.$router.push({name: 'button'})
-        },
       toUserInfo() {
-            this.$router.push({name: 'userInfo'})
-        }
+        this.$router.push({name: 'userInfo'})
+      },
+      logout() {
+        request.logout()
+          .then(res => {
+            if (res.code === 0) {
+              Toast("退出成功")
+              localStorage.setItem('userInfo', undefined)
+              this.$router.push("/login")
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
+      }
     },
     created() {
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"))
+      if (!this.userInfo) {
+        Toast.fail("尚未登录，请登录！")
+        this.$router.push("/login")
+      }
     }
-    }
+  }
 </script>
 
 <style scoped>

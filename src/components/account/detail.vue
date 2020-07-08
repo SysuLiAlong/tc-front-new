@@ -9,15 +9,15 @@
       />
       <p>
         <span class="labelWidth">用户名：</span>
-        <input type="text" v-model="accountDetail.userName">
+        <input type="text" class="myInput" v-model="accountDetail.userName">
       </p>
       <p>
         <span class="labelWidth">姓名：</span>
-        <input type="text" v-model="accountDetail.realName">
+        <input type="text" class="myInput" v-model="accountDetail.realName">
       </p>
       <p>
         <span class="labelWidth">权限：</span>
-        <select v-model="accountDetail.role" style="width: 152px;padding: 1px 2px">
+        <select v-model="accountDetail.role" class="mySelect" style="width: 152px;padding: 1px 2px">
           <option :value="role.commonUser">{{role.commonUserName}}</option>
           <option :value="role.admin">{{role.adminName}}</option>
           <option :value="role.superAdmin">{{role.superAdminName}}</option>
@@ -190,5 +190,25 @@
   margin-left: 4%;
   width: 20%;
   display: inline-block;
+}
+.mySelect {
+  background:#fafdfe;
+  height:28px;
+  width:138px;
+  line-height:28px;
+  border:1px solid #9bc0dd;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+}
+.myInput {
+  background:#fafdfe;
+  height:24px;
+  width:140px;
+  padding-left: 5px;;
+  line-height:28px;
+  border:1px solid #9bc0dd;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+  border-radius:2px;
 }
 </style>

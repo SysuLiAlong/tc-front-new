@@ -23,7 +23,7 @@
                     placeholder="密码"
                     :rules="[{ required: true, message: '请填写密码' }]"
             />
-            <van-checkbox v-model="checked" style="margin-top: 20px;margin-left: 20px">记住密码</van-checkbox>
+            <van-checkbox v-model="remember" style="margin-top: 20px;margin-left: 20px">记住密码</van-checkbox>
             <div style="margin: 16px;">
                 <van-button block type="info" native-type="submit">
                     提交
@@ -42,12 +42,12 @@ export default {
     return {
       username: '',
       password: '',
-      checked: true
+      remember: true
     }
   },
   methods: {
     onSubmit () {
-      this.$Api.login(this.username, this.password)
+      this.$Api.login(this.username, this.password, this.remember)
         .then(res => {
           if (res.code === 0) {
             localStorage.setItem('userInfo', JSON.stringify(res.data))
@@ -57,6 +57,15 @@ export default {
           }
         })
     }
+  },
+  created () {
+    if (this.$cookies.get("user_name")) {
+      this.username = this.$cookies.get("user_name");
+    }
+    if (this.$cookies.get("pass_word")) {
+      this.password = this.$cookies.get("pass_word");
+    }
+
   }
 }
 </script>

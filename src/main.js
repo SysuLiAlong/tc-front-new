@@ -5,8 +5,8 @@ import App from './App'
 import {router} from './router'
 import './vant'
 import Api from './api/request'
-import infiniteScroll from 'vue-infinite-scroll'
-Vue.use(infiniteScroll)
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
 
 Vue.prototype.$Api = Api
 

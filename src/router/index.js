@@ -8,11 +8,8 @@ const routes = [
     name: 'login',
     path: '/login',
     component: () => import('../components/Login')
-  },  {
-    path: '/picker',
-    name: 'TestVanField',
-    component: () => import('../components/test/TestVanField')
-  }, {
+  },
+  {
     path: '/material',
     name: 'material',
     component: () => import('../components/Material')
@@ -41,16 +38,6 @@ const routes = [
     component: () => import('../components/process/detail')
   },
   {
-    path: '/test/touch',
-    name: 'touchEvent',
-    component: () => import('../components/test/TouchEvent')
-  },
-  {
-    path: '/test/scroll',
-    name: 'scroll',
-    component: () => import('../components/test/ScrollTest')
-  },
-  {
     path: '/product',
     name: 'product',
     component: () => import('../components/product/list')
@@ -74,21 +61,6 @@ const routes = [
     path: '/produce/detail',
     name: 'produceDetail',
     component: () => import('../components/produce/detail')
-  },
-  {
-    path: '/test/select',
-    name: 'testSelect',
-    component: () => import('../components/test/SelectTest')
-  },
-  {
-    path: '/test/bind',
-    name: 'testBind',
-    component: () => import('../components/test/BindTest')
-  },
-  {
-    path: '/test/check_box',
-    name: 'checkBox',
-    component: () => import('../components/test/CheckBoxTest')
   },
   {
     path: '/account',
@@ -115,14 +87,6 @@ routes.forEach(route => {
 })
 
 const router = new Router({ routes })
-
-router.beforeEach((to, from, next) => {
-  const title = to.meta && to.meta.title
-  if (title) {
-    document.title = title
-  }
-  next()
-})
 
 export {
   router

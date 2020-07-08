@@ -5,7 +5,7 @@
         left-text= "返回"
         :right-text= "isCommonUser ? null : '删除'"
         @click-left="onClickLeft"
-        @click-right="isCommonUser ? null : deleteProduce"
+        @click-right="deleteProduce"
       />
       <div>
         <p>
@@ -89,7 +89,7 @@
       <van-dialog
         v-model="showAddMsg" title="添加信息" show-cancel-button
         :before-close="beforeCloseMsg"
-        @close="loadProduceMsg"
+        @close="loadPage"
       >
         <div style="text-align: center">
           <textarea v-model="content" class="textarea-inherit" rows="5"/>
@@ -99,7 +99,7 @@
       <van-dialog
         v-model="showAccept" title="接收" show-cancel-button
         :before-close="beforeCloseAccept"
-        @close="loadProduceMsg"
+        @close="loadPage"
       >
         <div style="text-align: center">
           <p>来自：{{lastProcess.processName}}</p>
@@ -110,7 +110,7 @@
       <van-dialog
         v-model="showReject" title="退回" show-cancel-button
         :before-close="beforeCloseReject"
-        @close="loadProduceMsg"
+        @close="loadPage"
       >
         <div style="text-align: center">
           <p>来自：{{lastProcess.processName}}</p>
@@ -126,7 +126,7 @@
         <div style="text-align: center">
           <div style="text-align: center">
             <p>转交至：{{nextProcess.processName}}</p>
-            <p>完成数量：<input type="number" v-model="fulfillNum" ></p>
+            <p>完成数量：<input type="number" class="myInput" v-model="fulfillNum" ></p>
           </div>
         </div>
       </van-dialog>
@@ -164,9 +164,6 @@
     },
     computed: {
       isEnd: function () {
-        console.log(this.lastProcess)
-        console.log(this.lastProcess.status)
-        console.log(this.lastProcess.status === 3)
         return this.lastProcess.status === 3
       }
     },
@@ -176,6 +173,14 @@
         this.produceDetail = {}
         this.produceProcess = []
         this.produceMsg = []
+      },
+      loadPage () {
+        this.loadProduceDetal()
+        this.loadLastProcess()
+        this.loadCurrentProcess()
+        this.loadNextProcess()
+        this.loadProduceProcess()
+        this.loadProduceMsg()
       },
       loadProduceDetal () {
         if (this.produceId !== null && this.produceId !== undefined) {
@@ -230,6 +235,9 @@
         this.$router.back()
       },
       deleteProduce () {
+        if (this.isCommonUser) {
+          return
+        }
         request.deleteProduce(this.produceId)
           .then(res => {
             if (res.code === 0) {
@@ -278,7 +286,8 @@
           let produceMsg = {
             produceId: this.produceId,
             content: this.content,
-            type: 1
+            type: 1,
+            processName: this.currentProcess.name
           }
           request.addProduceMsg(produceMsg)
             .then(res => {
@@ -302,7 +311,8 @@
           let param = {
             produceMsgEntity: {
               produceId: this.produceId,
-              type: 2
+              type: 2,
+              processName: this.lastProcess.name
             },
             produceProcessEntity: this.lastProcess
           }
@@ -331,7 +341,8 @@
           let param = {
             produceMsgEntity: {
               produceId: this.produceId,
-              type: 3
+              type: 3,
+              processName: this.lastProcess.name
             },
             produceProcessEntity: this.lastProcess
           }
@@ -355,13 +366,14 @@
       transmitProcess () {
         this.showTransmit = true
       },
-      beforeCloseTransmit () {
+      beforeCloseTransmit (action,done) {
         if (action == 'confirm') {
           let param = {
             produceMsgEntity: {
               produceId: this.produceId,
               amount: this.fulfillNum,
-              type: 4
+              type: 4,
+              processName: this.nextProcess.name
             },
             produceProcessEntity: this.currentProcess
           }
@@ -384,7 +396,7 @@
       },
       closeTransmit () {
         this.fulfillNum = null
-        this.loadProduceMsg()
+        this.loadPage()
       },
       msgDateFormat (timestamps) {
         let date = new Date(timestamps);
@@ -412,12 +424,7 @@
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"))
       this.isCommonUser = this.userInfo.roleId == role.commonUser ? true : false
       this.produceId = this.$route.params.produceId
-      this.loadProduceDetal()
-      this.loadLastProcess()
-      this.loadCurrentProcess()
-      this.loadNextProcess()
-      this.loadProduceProcess()
-      this.loadProduceMsg()
+      this.loadPage()
     }
   }
 </script>
@@ -428,5 +435,16 @@
     margin: 3px;
     padding: 3px;
     overflow: auto;
+  }
+  .myInput {
+    background:#fafdfe;
+    height:24px;
+    width:140px;
+    padding-left: 5px;;
+    line-height:28px;
+    border:1px solid #9bc0dd;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
   }
 </style>

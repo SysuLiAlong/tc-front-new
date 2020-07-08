@@ -8,7 +8,7 @@
       @click-right="createProcess"
     />
     <van-cell v-for="(item,index) in processList">
-      <span style="display: inline-block;margin-left: 3%;width: 30%;color: #1989fa; text-decoration:underline"
+      <span style="display: inline-block;width: 35%;color: #1989fa; text-decoration:underline"
             @click="detailProcess(item.id)">{{item.name}}</span>
       <span style="display: inline-block;margin-left: 3%;width: 30%">{{item.chargeUserName}}</span>
       <van-icon name="arrow-up" style="float: right;margin-left: 2%" :disabled="index !== 0" @click="upPriority(item.id,index)"/>
@@ -19,6 +19,7 @@
 
 <script>
   import request from '../../api/request'
+  import Toast from 'vant/lib/toast'
 
   export default {
     name: 'Process',
@@ -52,7 +53,10 @@
             if (res.code === 0) {
               this.getProcessList()
             } else {
-              Toast.fail(res.msg)
+              Toast({
+                duration: 3000,
+                message: res.msg
+              })
             }
           })
       },
@@ -63,7 +67,10 @@
             if (res.code === 0) {
               this.getProcessList()
             } else {
-              Toast.fail(res.msg)
+              Toast({
+                duration: 3000,
+                message: res.msg
+              })
             }
           })
       }

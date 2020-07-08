@@ -9,11 +9,11 @@
     />
     <p>
       <span style="display: inline-block;margin-left: 3%;width: 20%">流程名称：</span>
-      <input type="text" v-model="process.name">
+      <input type="text" class="myInput" v-model="process.name">
     </p>
     <p>
       <span style="display: inline-block;margin-left: 3%;width: 20%">负责人：</span>
-      <select v-model="process.chargeUserId" style="padding: 1px 2px;width: 166px">
+      <select v-model="process.chargeUserId" class="mySelect">
         <option v-for="item in userList" :value="item.value">{{item.label}}</option>
       </select>
     </p>
@@ -134,5 +134,24 @@
 </script>
 
 <style scoped>
-
+  .mySelect {
+    background:#fafdfe;
+    height:28px;
+    width:146px;
+    line-height:28px;
+    border:1px solid #9bc0dd;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+  }
+  .myInput {
+    background:#fafdfe;
+    height:24px;
+    width:140px;
+    padding-left: 5px;;
+    line-height:28px;
+    border:1px solid #9bc0dd;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+  }
 </style>
