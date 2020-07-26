@@ -8,17 +8,32 @@
       @click-right="saveProduce"
     />
     <van-field v-model="produceParam.orderCode" label="订单号" placeholder="请输入订单号"/>
-    <van-cell title="产品">
-      <select v-model="produceParam.productCode" class="mySelect">
-        <option value="">请选择产品</option>
-        <option
-          v-for="item in productList"
-          :value="item.value">
-          {{item.label}}
-        </option>
-      </select>
-    </van-cell>
-    <van-field v-model="produceParam.stove" type="digit" label="产品数量/炉" placeholder="请输入炉数"/>
+    <van-field
+      v-model="productCode"
+      center
+      clearable
+      label="产品编码"
+      placeholder="请输入产品编码"
+    >
+      <template #button>
+        <van-button size="small" type="primary" @click="searchProduct">查询</van-button>
+      </template>
+    </van-field>
+    <van-list
+      v-show="showProductList"
+      v-for="item in productList"
+      style="background-color: #ebedf0"
+    >
+      <div @click="selectProduct(item)" style="margin: 3px 0px">
+        <span style="display: inline-block; margin: 5px 10px;width: 30%">产品编码：{{item.name}}</span>
+        <span style="display: inline-block;margin: 5px 10px;">产品名称：{{item.code}}</span>
+      </div>
+    </van-list>
+      <van-field v-if="selectedProduct" :value="selectedProduct.code" label="产品编码"></van-field>
+      <van-field v-if="selectedProduct" :value="selectedProduct.name" label="产品名称"></van-field>
+      <van-field v-if="selectedProduct" :value="selectedProduct.prdNums" label="每炉数量"></van-field>
+      <van-field v-if="selectedProduct" :value="selectedProduct.alertNums + '%'" label="次品率"></van-field>
+    <van-field v-model="produceParam.stove" type="digit" label="生产炉数" placeholder="请输入炉数"/>
     <van-field label="其他" disabled>
       <template #button>
         <van-button size="small" type="primary" @click="editable = !editable">{{editable ? '保存' : '编辑'}}</van-button>
@@ -46,12 +61,17 @@
         productList: [],
         editable: false,
         isSaved: false,
+        showProductList: false,
+        selectedProduct: null,
+        productCode: null
       }
     },
     methods: {
       initData () {
         this.editable = false
         this.isSaved = false
+        this.showProductList = false
+        this.selectedProduct = null
         this.produceParam = {
           orderCode: "",
           productCode: "",
@@ -59,22 +79,20 @@
           description: ""
         }
       },
-      loadProductOptions () {
-        request.productOptions()
-          .then(res => {
-            if (res.code === 0) {
-              this.productList = res.data
-            } else {
-              Toast.fail(res.msg)
-            }
-          })
-      },
       onClickLeft () {
         this.$router.back()
       },
       saveProduce () {
         if (this.isSaved) {
           Toast.fail("您已经保存了，如需修改，请先返回再进行修改！")
+          return
+        }
+        if (!this.produceParam.orderCode) {
+          Toast("订单号不能为空！")
+          return
+        }
+        if (!this.produceParam.productCode) {
+          Toast("产品编码不能为空！")
           return
         }
         request.addProduce(this.produceParam)
@@ -87,10 +105,36 @@
             }
           })
       },
+      selectProduct (item) {
+        this.selectedProduct = item
+        this.showProductList = false
+        this.produceParam.productCode = item.code
+      },
+      searchProduct () {
+        if (!this.productCode) {
+          Toast("请先填写产品编码！")
+          return
+        }
+        let pageQueryProductParam = {
+          pageNo: 1,
+          pageSize: 10,
+          queryParam: {
+            code: this.productCode
+          }
+        }
+        request.pageQryProduct(pageQueryProductParam)
+          .then(res => {
+            if (res.code === 0) {
+              this.productList = res.data.data
+              this.showProductList = true
+            } else {
+              Toast(res.msg)
+            }
+          })
+      }
     },
     created () {
       this.initData()
-      this.loadProductOptions()
     }
   }
 </script>

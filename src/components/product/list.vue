@@ -66,7 +66,7 @@
         let pageParams = {
           pageNo: this.page.pageNo,
           pageSize: this.page.pageSize,
-          queryParams: {
+          queryParam: {
             name: this.name
           }
         }

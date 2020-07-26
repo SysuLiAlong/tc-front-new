@@ -7,10 +7,30 @@
       @click-left="onClickLeft"
       @click-right="saveProduct"
     />
-    <van-field v-model="product.code" label="产品ID" placeholder="请输入产品ID"/>
-    <van-field v-model="product.name" label="产品名称" placeholder="请输入产品名称"/>
-    <van-field v-model="product.prdNums" type="digit" label="产品数量/炉" placeholder="请输入产品数量/炉"/>
-    <van-field v-model="product.alertNums" type="digit" label="次品报警数量" placeholder="请输入次品报警数量"/>
+    <van-field
+      v-model="product.code" label="产品编码"
+      placeholder="请输入产品编码"
+    />
+    <van-field
+      v-model="product.name" label="产品名称"
+      placeholder="请输入产品名称"
+    />
+    <van-field
+      v-model="product.prdNums" type="digit"
+      label="产品数量/炉" placeholder="请输入产品数量/炉"
+    />
+    <van-field
+      v-model="product.alertNums" type="digit"
+      label="次品报警数量" placeholder="请输入次品报警率（%）"
+    />
+    <van-field
+      v-model="product.weight" type="number"
+      label="单重" placeholder="单重"
+    />
+    <van-field
+      v-model="product.imageCode"
+      label="图元" placeholder="图元"
+    />
 
 
     <van-divider>所需材料</van-divider>
@@ -226,6 +246,9 @@
           materialParams: materialArr,
           ruleParams: this.ruleList
         }
+        if (!this.checkProductParam(this.product)) {
+          return
+        }
         if (this.isAdd) {
           request.addProduct(detailParam)
             .then(res => {
@@ -247,6 +270,31 @@
               }
             })
         }
+      },
+      checkProductParam () {
+        if (!this.product.code) {
+          Toast("请填写产品编码")
+          return false
+        }
+        if (!this.product.name) {
+          Toast("请填写产品名称")
+          return false
+        }
+        if (!this.product.prdNums) {
+          Toast("请填写每炉数量")
+          return false
+        }
+        if (!this.product.alertNums) {
+          Toast("请填写报警率")
+          return false
+        } else {
+          let reg = new RegExp("^(\\d|[1-9]\\d|100)$")
+          if (!reg.test(this.product.alertNums)) {
+            Toast("报警率在0~100之间")
+            return false
+          }
+        }
+        return true
       },
       containChecked (list , newItem, col) {
         let isContain = false
@@ -403,7 +451,7 @@
       },
       addRule () {
         this.showRule = true
-      }
+      },
     },
     created () {
       this.initData()

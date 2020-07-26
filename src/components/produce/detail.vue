@@ -24,6 +24,24 @@
             产品：{{produceDetail.productCode}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
+            名称：{{produceDetail.productName}}
+          </span>
+        </p>
+        <p>
+          <span
+            style="margin-left: 3%; display: inline-block; width: 40%;">
+            数量/炉：{{produceDetail.prdNums}}
+          </span>
+          <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
+            次品率：{{produceDetail.alertNums ? produceDetail.alertNums + '%' : ''}}
+          </span>
+        </p>
+        <p>
+          <span
+            style="margin-left: 3%; display: inline-block; width: 40%;">
+            创建人：{{produceDetail.createBy}}
+          </span>
+          <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
             计划数量：{{produceDetail.stove}}
           </span>
         </p>
