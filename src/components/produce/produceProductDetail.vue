@@ -30,16 +30,16 @@
             创建人：{{produceProductDetail.createBy}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            计划数量：{{produceProductDetail.stove}}
+            计划数量：{{produceProductDetail.mount}}
           </span>
         </p>
         <p>
           <span
             style="margin-left: 3%; display: inline-block; width: 40%; ">
-            当前流程：{{produceProductDetail.produceProcessName}}
+            当前流程：{{produceProductDetail.currentProcess}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            负责人：{{produceProductDetail.processChargeUserName}}
+            负责人：{{produceProductDetail.chargeUserName}}
           </span>
         </p>
       </div>
@@ -86,10 +86,18 @@
       </van-list>
 
       <div style="width: 100%;margin-top: 10px;margin-bottom: 10px">
-        <van-button color="#1E38FA" size="small" style="margin-left: 5%" @click="addMsg">添加信息</van-button>
-        <van-button color="#1E38FA" size="small" style="margin-left: 5%" :disabled="!isEnd" @click="acceptProcess">接受</van-button>
-        <van-button color="#1E38FA" size="small" style="margin-left: 5%" :disabled="!isEnd" @click="rejectProcess">退回</van-button>
-        <van-button color="#1E38FA" size="small" style="margin-left: 5%" :disabled="isEnd" @click="transmitProcess">转交</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 3%" @click="addMsg">添加信息</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 3%" @click="onPickFile">传图</van-button>
+        <input
+          type="file"
+          ref="fileInput"
+          accept="image/*"
+          @change="getFile"
+          style="display: none"
+        >
+        <van-button color="#1E38FA" size="small" style="margin-left: 3%" :disabled="!isEnd" @click="acceptProcess">接受</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 3%" :disabled="!isEnd" @click="rejectProcess">退回</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 3%" :disabled="isEnd" @click="transmitProcess">转交</van-button>
       </div>
 
       <van-dialog
@@ -156,6 +164,7 @@
         showReject: false,
         showTransmit: false,
         produceProductId: '',
+        produceId: '',
         produceProductDetail: {
 
         },
@@ -165,9 +174,12 @@
         currentProcess: {},
         nextProcess: {},
         fulfillNum: '',
-        content: ''
+        content: '',
+        image: null,
+        imageUrl: ''
       }
     },
+
     computed: {
       isEnd: function () {
         return this.lastProcess.status === 3
@@ -179,6 +191,8 @@
         this.produceDetail = {}
         this.produceProcess = []
         this.produceMsg = []
+        this.image = null
+        this.imageUrl = ''
       },
       loadPage () {
         this.loadProduceProductDetail()
@@ -187,6 +201,57 @@
         this.loadNextProcess()
         this.loadProduceProcess()
         this.loadProduceMsg()
+      },
+      onPickFile () {
+        this.$refs.fileInput.click()
+      },
+      getFile (event) {
+        console.log('getFile')
+        const files = event.target.files
+        let filename = files[0].name          //只有一个文件
+        if ( filename.lastIndexOf('.') <= 0 ) {
+          return Toast("Please add a valid image!")        //判断图片是否有效
+        }
+        const fileReader = new FileReader()                //内置方法new FileReader()   读取文件
+        fileReader.addEventListener('load',() => {
+          this.imageUrl = fileReader.result
+        })
+        fileReader.readAsDataURL(files[0])
+        this.image = files[0]
+        //到这里后, 选择图片就可以显示出来了
+        this.onUpload()
+      } ,
+      onUpload () {
+        console.log('onUpload')
+        let fd = new FormData()
+        fd.append('image',this.image)
+        console.log(this.image)
+        request.uploadImage(fd)
+          .then(res => {
+            if (res.code === 0 && res.data) {
+              this.imageUrl = res.data
+              this.onAddImageMsg(this.imageUrl)
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
+      },
+      onAddImageMsg (imageName) {
+        let imageMsg = {
+          produceProductId: this.produceProductId,
+          produceId: this.produceId,
+          type: 5,
+          filePath: imageName,
+          processName: this.currentProcess.name
+        }
+        request.addProduceMsg(imageMsg)
+          .then(res => {
+            if (res.code === 0) {
+              Toast("上传图片成功！")
+            } else {
+              Toast.fail(res.msg)
+            }
+          })
       },
       loadProduceProductDetail () {
         if (this.produceProductId !== null && this.produceProductId !== undefined) {
@@ -203,8 +268,8 @@
         }
       },
       loadProduceProcess () {
-        if (this.produceId !== null && this.produceId !== undefined) {
-          request.listProduceProcess(this.produceId)
+        if (this.produceProductId !== null && this.produceProductId !== undefined) {
+          request.listProduceProcess(this.produceProductId)
             .then(res => {
               if(res.code === 0) {
                 res.data.forEach(item => {
@@ -238,7 +303,7 @@
         }
       },
       onClickLeft () {
-        this.$router.back()
+        this.$router.replace({name: 'produceDetail',params: {produceId: this.produceId}})
       },
       loadLastProcess () {
         request.getLastProduceProcess(this.produceProductId)
@@ -277,6 +342,7 @@
         if (action == 'confirm') {
           let produceMsg = {
             produceProductId: this.produceProductId,
+            produceId: this.produceId,
             content: this.content,
             type: 1,
             processName: this.currentProcess.name
@@ -302,9 +368,12 @@
         if (action == 'confirm') {
           let param = {
             produceMsgParam: {
+              produceId : this.produceId,
               produceProductId: this.produceProductId,
               type: 2,
-              processName: this.lastProcess.name
+              processName: this.lastProcess.name,
+              amount: this.lastProcess.endNum,
+              processName: this.lastProcess.processName
             },
             produceProcessParam: this.lastProcess
           }
@@ -332,9 +401,12 @@
         if (action == 'confirm') {
           let param = {
             produceMsgParam: {
-              produceId: this.produceId,
+              produceId : this.produceId,
+              produceProductId: this.produceProductId,
               type: 3,
-              processName: this.lastProcess.name
+              processName: this.lastProcess.name,
+              amount: this.lastProcess.endNum,
+              processName: this.lastProcess.processName
             },
             produceProcessParam: this.lastProcess
           }
@@ -363,11 +435,12 @@
           let param = {
             produceMsgParam: {
               produceId: this.produceId,
+              produceProductId: this.produceProductId,
               amount: this.fulfillNum,
               type: 4,
-              processName: this.nextProcess.name
+              processName: this.nextProcess.processName,
             },
-            produceProcessParam: this.currentProcess
+            produceProcessParam: Object.assign(this.currentProcess, {endNum: this.fulfillNum})
           }
           request.transmitProduce(param)
             .then(res => {
@@ -387,7 +460,7 @@
         }
       },
       closeTransmit () {
-        this.fulfillNum = null
+        this.endNum = null
         this.loadPage()
       },
       msgDateFormat (timestamps) {
@@ -416,6 +489,7 @@
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"))
       this.isCommonUser = this.userInfo.roleId == role.commonUser ? true : false
       this.produceProductId = this.$route.params.produceProductId
+      this.produceId = this.$route.params.produceId
       this.loadPage()
     }
   }

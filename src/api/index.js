@@ -41,7 +41,8 @@ export default {
     update: base_url + 'product/update',
     delete: base_url + 'product/delete/',
     page: base_url + 'product/page',
-    options: base_url + 'product/options'
+    options: base_url + 'product/options',
+    queryByCode: base_url + 'product/code'
   },
   produce: {
     pageQry: base_url + 'produce/page_qry',
@@ -58,5 +59,11 @@ export default {
     currentProduceProcess: base_url + 'produce/process/current/{produce_product_id}',
     lastProduceProcess: base_url + 'produce/process/last/{produce_product_id}',
     delete: base_url + 'produce/delete/{produceId}'
+  },
+  file: {
+    uploadImage: base_url + 'file/image/upload',
+  },
+  alarm: {
+    pageQry: base_url + 'alarm/page_qry'
   }
 }

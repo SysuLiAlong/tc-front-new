@@ -16,12 +16,12 @@
       placeholder="请输入产品名称"
     />
     <van-field
-      v-model="product.prdNums" type="digit"
+      v-model="product.numsPerStove" type="digit"
       label="产品数量/炉" placeholder="请输入产品数量/炉"
     />
     <van-field
-      v-model="product.alertNums" type="digit"
-      label="次品报警数量" placeholder="请输入次品报警率（%）"
+      v-model="product.alertPercent" type="digit"
+      label="次品报警率" placeholder="请输入次品报警率（%）"
     />
     <van-field
       v-model="product.weight" type="number"
@@ -280,16 +280,16 @@
           Toast("请填写产品名称")
           return false
         }
-        if (!this.product.prdNums) {
+        if (!this.product.numsPerStove) {
           Toast("请填写每炉数量")
           return false
         }
-        if (!this.product.alertNums) {
+        if (!this.product.alertPercent) {
           Toast("请填写报警率")
           return false
         } else {
           let reg = new RegExp("^(\\d|[1-9]\\d|100)$")
-          if (!reg.test(this.product.alertNums)) {
+          if (!reg.test(this.product.alertPercent)) {
             Toast("报警率在0~100之间")
             return false
           }

@@ -8,38 +8,26 @@
       @click-right="saveProduce"
     />
     <van-field v-model="produceParam.orderCode" label="订单号" placeholder="请输入订单号"/>
-    <van-field
-      v-model="productCode"
-      center
-      clearable
-      label="产品编码"
-      placeholder="请输入产品编码"
-    >
-      <template #button>
-        <van-button size="small" type="primary" @click="searchProduct">查询</van-button>
-      </template>
-    </van-field>
+
     <van-list
-      v-show="showProductList"
-      v-for="item in productList"
-      style="background-color: #ebedf0"
+      v-for="(item, index) in addedProductList"
     >
-      <div @click="selectProduct(item)" style="margin: 3px 0px">
-        <span style="display: inline-block; margin: 5px 10px;width: 30%">产品编码：{{item.name}}</span>
-        <span style="display: inline-block;margin: 5px 10px;">产品名称：{{item.code}}</span>
+      <div class="addProduceClass">
+        <van-field v-model="item.code" label="产品编码" placeholder="请输入产品编码"/>
+        <van-field v-model="item.mount" label="生产数量" placeholder="请输入生产数量"/>
+        <van-field :value="item.mount / item.numsPerStove" v-if="item.numsPerStove" disabled label="炉数"/>
+        <van-button type="info" size="small" style="margin-top: 5px;margin-left: 5px" @click="addProduceProduct(item)">新增</van-button>
+        <van-button type="danger" size="small" style="margin-top: 5px;margin-left: 5px" @click="deleteProduceProduct(index)">删除</van-button>
       </div>
     </van-list>
-      <van-field v-if="selectedProduct" :value="selectedProduct.code" label="产品编码"></van-field>
-      <van-field v-if="selectedProduct" :value="selectedProduct.name" label="产品名称"></van-field>
-      <van-field v-if="selectedProduct" :value="selectedProduct.prdNums" label="每炉数量"></van-field>
-      <van-field v-if="selectedProduct" :value="selectedProduct.alertNums + '%'" label="次品率"></van-field>
-    <van-field v-model="produceParam.stove" type="digit" label="生产炉数" placeholder="请输入炉数"/>
-    <van-field label="其他" disabled>
-      <template #button>
-        <van-button size="small" type="primary" @click="editable = !editable">{{editable ? '保存' : '编辑'}}</van-button>
-      </template>
-    </van-field>
-    <textarea v-model="produceParam.content" :disabled=!editable class="textarea-inherit"  rows="5"></textarea>
+
+    <van-field
+      v-model="produceParam.description"
+      label="描述"
+      type="textarea"
+      placeholder="请描述生产计划"
+      autosize
+    />
   </div>
 </template>
 
@@ -54,81 +42,107 @@
       return {
         produceParam: {
           orderCode: "",
-          productCode: "",
-          stove: null,
-          description: ""
+          description: "",
+          produceProductParams: []
         },
-        productList: [],
-        editable: false,
+        addedProductList: [],
         isSaved: false,
-        showProductList: false,
         selectedProduct: null,
-        productCode: null
+        productCode: null,
+        canAdd: true
       }
     },
     methods: {
       initData () {
-        this.editable = false
         this.isSaved = false
-        this.showProductList = false
-        this.selectedProduct = null
+        this.canAdd = true
         this.produceParam = {
           orderCode: "",
-          productCode: "",
-          stove: null,
-          description: ""
+          description: "",
+          produceProductParams: []
         }
+        this.addedProductList = [{
+          code: null,
+          mount: null,
+          numsPerStove: null
+        }]
       },
       onClickLeft () {
         this.$router.back()
       },
-      saveProduce () {
+      async saveProduce () {
         if (this.isSaved) {
-          Toast.fail("您已经保存了，如需修改，请先返回再进行修改！")
+          Toast("已经保存！")
           return
         }
         if (!this.produceParam.orderCode) {
           Toast("订单号不能为空！")
           return
         }
-        if (!this.produceParam.productCode) {
-          Toast("产品编码不能为空！")
+        if (this.addedProductList.length === 0) {
+          Toast("至少添加一个产品！")
           return
         }
-        request.addProduce(this.produceParam)
-          .then(res => {
-            if (res.code === 0) {
-              this.isSaved = true
-              Toast("保存成功")
-            } else {
-              Toast.fail(res.msg)
-            }
-          })
-      },
-      selectProduct (item) {
-        this.selectedProduct = item
-        this.showProductList = false
-        this.produceParam.productCode = item.code
-      },
-      searchProduct () {
-        if (!this.productCode) {
-          Toast("请先填写产品编码！")
-          return
-        }
-        let pageQueryProductParam = {
-          pageNo: 1,
-          pageSize: 10,
-          queryParam: {
-            code: this.productCode
+
+        for (let index = 0; index < this.addedProductList.length; index++) {
+          let item = this.addedProductList[index]
+          if (!item.code || !item.mount) {
+            Toast("产品编码和数量不能为空！")
+            return;
+          }
+          // 第一条和最后一条记录保存时校验code和mount，并且获取productId
+          if (index === 0 || index === this.addedProductList.length - 1) {
+            console.log('111')
+            await this.queryProductByCode(item)
           }
         }
-        request.pageQryProduct(pageQueryProductParam)
+        if (this.canAdd) {
+          console.log('4444')
+          request.addProduce(this.produceParam)
+            .then(res => {
+              console.log('555')
+              if (res.code === 0) {
+                this.isSaved = true
+                Toast("保存成功")
+              } else {
+                Toast.fail(res.msg)
+              }
+            })
+        }
+
+      },
+      addProduceProduct(item) {
+        if (!item.code || !item.mount) {
+          Toast("产品编码和数量不能为空！")
+          return;
+        }
+        this.queryProductByCode(item)
+
+        let newItem = {
+          code : null,
+          productId : null,
+          mount : null,
+          numsPerStove : null
+        }
+        this.addedProductList.push(newItem)
+      },
+      deleteProduceProduct(index) {
+        this.addedProductList.splice(index, 1)
+      },
+      async queryProductByCode(item) {
+        console.log('222')
+        await request.queryProductByCode(item.code)
           .then(res => {
             if (res.code === 0) {
-              this.productList = res.data.data
-              this.showProductList = true
+              let product = {
+                productId: res.data.id,
+                mount: item.mount
+              }
+              this.produceParam.produceProductParams.push(product)
             } else {
-              Toast(res.msg)
+              console.log('333')
+              Toast.fail(res.msg)
+              this.canAdd = false
             }
           })
       }
@@ -146,13 +160,8 @@
     padding: 3px;
     overflow: auto;
   }
-  .mySelect {
-    background:#ffffff;
-    height:28px;
-    width:140px;
-    line-height:24px;
-    border:1px solid #ffffff;
-    -moz-border-radius:2px;
-    -webkit-border-radius:2px;
+  .addProduceClass {
+    width: 98%;
+    border: 3px #ebedf0 solid;
   }
 </style>

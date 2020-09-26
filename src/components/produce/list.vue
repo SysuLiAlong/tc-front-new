@@ -37,8 +37,8 @@
           <span style="margin-left: 1%;margin-right: 3%; display: inline-block; ">
             订单号：{{item.orderCode}}
           </span>
-          <span>
-            {{item.status ? '未完成' : '已完成'}}
+          <span style="float: right; margin-right: 3%">
+            {{item.status ? '已完成' : '未完成'}}
           </span>
         </p>
       </div>

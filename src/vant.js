@@ -21,7 +21,9 @@ import {
   TabbarItem,
   Toast,
   CheckboxGroup,
-  Icon
+  Icon,
+  DropdownItem,
+  DropdownMenu
 } from 'vant'
 
 Vue.use(NavBar)
@@ -43,4 +45,6 @@ Vue.use(Picker)
 Vue.use(Overlay)
 Vue.use(Divider)
 Vue.use(CheckboxGroup)
+Vue.use(DropdownItem)
+Vue.use(DropdownMenu)
 Vue.use(Icon);

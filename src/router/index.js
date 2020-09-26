@@ -58,9 +58,14 @@ const routes = [
     component: () => import('../components/produce/add')
   },
   {
+    path: '/produce/product/detail',
+    name: 'produceProductDetail',
+    component: () => import('../components/produce/produceProductDetail')
+  },
+  {
     path: '/produce/detail',
     name: 'produceDetail',
-    component: () => import('../components/produce/productDetail')
+    component: () => import('../components/produce/produceDetail')
   },
   {
     path: '/account',
@@ -76,6 +81,11 @@ const routes = [
     path: '/account/add',
     name: 'addAccount',
     component: () => import('../components/account/add')
+  },
+  {
+    path: '/alarm',
+    name: 'alarmList',
+    component: () => import('../components/alarm/list')
   }
 
 

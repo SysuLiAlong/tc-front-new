@@ -21,6 +21,9 @@
             <van-grid-item icon="peer-pay" text="流程" to="/process" />
             <van-grid-item icon="aim" text="生产计划" to="/produce" />
           </van-grid>
+          <van-grid clickable :column-num="1">
+            <van-grid-item icon="bulb-o" text="告警" to="/alarm" />
+          </van-grid>
         </div>
         <div v-if="this.userInfo.role === role.superAdmin">
           <van-grid clickable :column-num="2">
@@ -31,7 +34,8 @@
             <van-grid-item icon="peer-pay" text="流程" to="/process" />
             <van-grid-item icon="aim" text="生产计划" to="/produce" />
           </van-grid>
-          <van-grid clickable :column-num="1">
+          <van-grid clickable :column-num="2">
+            <van-grid-item icon="bulb-o" text="告警" to="/alarm" />
             <van-grid-item icon="manager-o" text="账号" to="/account" />
           </van-grid>
         </div>

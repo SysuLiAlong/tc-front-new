@@ -153,6 +153,16 @@ const productOptions = () => {
   })
 }
 
+const queryProductByCode = (code) => {
+  return instance({
+    url: api.product.queryByCode,
+    method: 'get',
+    params: {
+      code: code
+    }
+  })
+}
+
 const pageQryAccount = (pageQryParam) => {
   return instance({
     url: api.user.page,
@@ -338,6 +348,24 @@ const logout = () => {
   })
 }
 
+const uploadImage = (image) => {
+  return instance({
+    url: api.file.uploadImage,
+    method: 'post',
+    data: image
+  })
+}
+
+const pageQryAlarm = (queryParam) => {
+  return instance({
+    url: api.alarm.pageQry,
+    method: 'post',
+    data: queryParam
+  })
+}
+
+
+
 export default {
   login,
   listMaterial,
@@ -358,6 +386,7 @@ export default {
   pageQryProduct,
   detailProduct,
   productOptions,
+  queryProductByCode,
   pageQryAccount,
   pageQryProduce,
   addProduce,
@@ -381,5 +410,7 @@ export default {
   addAccount,
   processDetail,
   exChangePriority,
-  logout
+  logout,
+  uploadImage,
+  pageQryAlarm
 }
