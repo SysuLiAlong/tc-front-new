@@ -1,57 +1,45 @@
 <template>
     <div>
       <van-nav-bar
-        title="生产计划"
+        title="生产详情"
         left-text= "返回"
-        :right-text= "isCommonUser ? null : '删除'"
         @click-left="onClickLeft"
-        @click-right="deleteProduce"
       />
       <div>
         <p>
           <span
-            style="margin-left: 3%; display: inline-block; width: 40%;"
-          >
-            单号：{{produceDetail.code}}
+            style="margin-left: 3%; display: inline-block; width: 40%;">
+            产品：{{produceProductDetail.code}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            订单号：{{produceDetail.orderCode}}
+            名称：{{produceProductDetail.productName}}
           </span>
         </p>
         <p>
           <span
             style="margin-left: 3%; display: inline-block; width: 40%;">
-            产品：{{produceDetail.productCode}}
+            数量/炉：{{produceProductDetail.numsPerStove}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            名称：{{produceDetail.productName}}
+            次品率：{{produceProductDetail.alertPercent ? produceProductDetail.alertPercent + '%' : ''}}
           </span>
         </p>
         <p>
           <span
             style="margin-left: 3%; display: inline-block; width: 40%;">
-            数量/炉：{{produceDetail.prdNums}}
+            创建人：{{produceProductDetail.createBy}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            次品率：{{produceDetail.alertNums ? produceDetail.alertNums + '%' : ''}}
-          </span>
-        </p>
-        <p>
-          <span
-            style="margin-left: 3%; display: inline-block; width: 40%;">
-            创建人：{{produceDetail.createBy}}
-          </span>
-          <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            计划数量：{{produceDetail.stove}}
+            计划数量：{{produceProductDetail.stove}}
           </span>
         </p>
         <p>
           <span
             style="margin-left: 3%; display: inline-block; width: 40%; ">
-            当前流程：{{produceDetail.produceProcessName}}
+            当前流程：{{produceProductDetail.produceProcessName}}
           </span>
           <span style="margin-left: 3%;margin-right: 3%; display: inline-block;">
-            负责人：{{produceDetail.processChargeUserName}}
+            负责人：{{produceProductDetail.processChargeUserName}}
           </span>
         </p>
       </div>
@@ -167,8 +155,8 @@
         showAccept: false,
         showReject: false,
         showTransmit: false,
-        produceId: '',
-        produceDetail: {
+        produceProductId: '',
+        produceProductDetail: {
 
         },
         produceProcess:[],
@@ -187,25 +175,25 @@
     },
     methods: {
       initData () {
-        this.produceId = ''
+        this.produceProductId = ''
         this.produceDetail = {}
         this.produceProcess = []
         this.produceMsg = []
       },
       loadPage () {
-        this.loadProduceDetal()
+        this.loadProduceProductDetail()
         this.loadLastProcess()
         this.loadCurrentProcess()
         this.loadNextProcess()
         this.loadProduceProcess()
         this.loadProduceMsg()
       },
-      loadProduceDetal () {
-        if (this.produceId !== null && this.produceId !== undefined) {
-          request.detailProduce(this.produceId)
+      loadProduceProductDetail () {
+        if (this.produceProductId !== null && this.produceProductId !== undefined) {
+          request.detailProduceProduct(this.produceProductId)
             .then(res => {
               if(res.code === 0) {
-                this.produceDetail = res.data
+                this.produceProductDetail = res.data
               } else {
                 Toast(res.msg)
               }
@@ -233,8 +221,8 @@
         }
       },
       loadProduceMsg () {
-        if (this.produceId !== null && this.produceId !== undefined) {
-          request.listProduceMsg(this.produceId)
+        if (this.produceProductId !== null && this.produceProductId !== undefined) {
+          request.listProduceMsg(this.produceProductId)
             .then(res => {
               if(res.code === 0) {
                 res.data.forEach(item => {
@@ -252,22 +240,8 @@
       onClickLeft () {
         this.$router.back()
       },
-      deleteProduce () {
-        if (this.isCommonUser) {
-          return
-        }
-        request.deleteProduce(this.produceId)
-          .then(res => {
-            if (res.code === 0) {
-              Toast("删除成功")
-              this.$router.back()
-            } else {
-              Toast.fail(res.msg)
-            }
-          })
-      },
       loadLastProcess () {
-        request.getLastProduceProcess(this.produceId)
+        request.getLastProduceProcess(this.produceProductId)
           .then(res => {
             if (res.code === 0) {
               this.lastProcess = res.data
@@ -277,7 +251,7 @@
           })
       },
       loadCurrentProcess () {
-        request.getCurrentProduceProcess(this.produceId)
+        request.getCurrentProduceProcess(this.produceProductId)
           .then(res => {
             if (res.code === 0) {
               this.currentProcess = res.data
@@ -287,7 +261,7 @@
           })
       },
       loadNextProcess () {
-        request.getNextProduceProcess(this.produceId)
+        request.getNextProduceProcess(this.produceProductId)
           .then(res => {
             if (res.code === 0) {
               this.nextProcess = res.data
@@ -302,7 +276,7 @@
       beforeCloseMsg (action, done) {
         if (action == 'confirm') {
           let produceMsg = {
-            produceId: this.produceId,
+            produceProductId: this.produceProductId,
             content: this.content,
             type: 1,
             processName: this.currentProcess.name
@@ -327,12 +301,12 @@
       beforeCloseAccept (action,done) {
         if (action == 'confirm') {
           let param = {
-            produceMsgEntity: {
-              produceId: this.produceId,
+            produceMsgParam: {
+              produceProductId: this.produceProductId,
               type: 2,
               processName: this.lastProcess.name
             },
-            produceProcessEntity: this.lastProcess
+            produceProcessParam: this.lastProcess
           }
           request.acceptProduce(param)
             .then(res => {
@@ -357,12 +331,12 @@
       beforeCloseReject (action,done) {
         if (action == 'confirm') {
           let param = {
-            produceMsgEntity: {
+            produceMsgParam: {
               produceId: this.produceId,
               type: 3,
               processName: this.lastProcess.name
             },
-            produceProcessEntity: this.lastProcess
+            produceProcessParam: this.lastProcess
           }
           request.rejectProduce(param)
             .then(res => {
@@ -387,13 +361,13 @@
       beforeCloseTransmit (action,done) {
         if (action == 'confirm') {
           let param = {
-            produceMsgEntity: {
+            produceMsgParam: {
               produceId: this.produceId,
               amount: this.fulfillNum,
               type: 4,
               processName: this.nextProcess.name
             },
-            produceProcessEntity: this.currentProcess
+            produceProcessParam: this.currentProcess
           }
           request.transmitProduce(param)
             .then(res => {
@@ -441,7 +415,7 @@
       this.initData()
       this.userInfo = JSON.parse(localStorage.getItem("userInfo"))
       this.isCommonUser = this.userInfo.roleId == role.commonUser ? true : false
-      this.produceId = this.$route.params.produceId
+      this.produceProductId = this.$route.params.produceProductId
       this.loadPage()
     }
   }

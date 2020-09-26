@@ -60,7 +60,7 @@ const routes = [
   {
     path: '/produce/detail',
     name: 'produceDetail',
-    component: () => import('../components/produce/detail')
+    component: () => import('../components/produce/productDetail')
   },
   {
     path: '/account',

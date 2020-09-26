@@ -37,19 +37,10 @@
           <span style="margin-left: 1%;margin-right: 3%; display: inline-block; ">
             订单号：{{item.orderCode}}
           </span>
-        </p>
-        <p>
-          <span style="margin-left: 3%; display: inline-block; width: 40%">
-            产品：{{item.productCode}}
-          </span>
-          <span style="margin-left: 1%; display: inline-block; width: 20%">
-            数量：{{item.stove}}
-          </span>
-          <span style="margin-left: 1%; display: inline-block;">
-            状态：{{item.produceProcessName}}
+          <span>
+            {{item.status ? '未完成' : '已完成'}}
           </span>
         </p>
-        <van-divider></van-divider>
       </div>
     </van-list>
 
@@ -100,8 +91,7 @@
           pageNo: this.page.pageNo,
           pageSize: this.page.pageSize,
           orderParam: this.orderParam,
-          orderCode: this.orderCode,
-          chargeUserName: this.userInfo.userName
+          orderCode: this.orderCode
         }
         request.pageQryProduce(pageParams)
           .then(res => {

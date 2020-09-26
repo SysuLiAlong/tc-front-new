@@ -46,16 +46,17 @@ export default {
   produce: {
     pageQry: base_url + 'produce/page_qry',
     add: base_url + 'produce/add',
+    listProduceProduct: base_url + 'produce/',
     addMsg: base_url + 'produce/msg/add',
-    listProduceProcess: base_url + 'produce/process/{produceId}',
-    listProduceMsg: base_url + 'produce/msg/{produceId}',
-    detail: base_url + 'produce/detail/{produceId}',
+    listProduceProcess: base_url + 'produce/process/{produce_product_id}',
+    listProduceMsg: base_url + 'produce/msg/{produce_product_id}',
+    detail: base_url + 'produce/detail/{produce_product_id}',
     accept: base_url + 'produce/process/accept',
     reject: base_url + 'produce/process/reject',
     transmit: base_url + 'produce/process/transmit',
-    nextProduceProcess: base_url + 'produce/process/next/{produceId}',
-    currentProduceProcess: base_url + 'produce/process/current/{produceId}',
-    lastProduceProcess: base_url + 'produce/process/last/{produceId}',
+    nextProduceProcess: base_url + 'produce/process/next/{produce_product_id}',
+    currentProduceProcess: base_url + 'produce/process/current/{produce_product_id}',
+    lastProduceProcess: base_url + 'produce/process/last/{produce_product_id}',
     delete: base_url + 'produce/delete/{produceId}'
   }
 }

@@ -177,6 +177,13 @@ const addProduce = (data) => {
   })
 }
 
+const loadProduceProduct = (produceId) => {
+  return instance({
+    url: api.produce.listProduceProduct + produceId,
+    method: 'get'
+  })
+}
+
 const deleteProduce = (produceId) => {
   return instance({
     url: api.produce.delete.replace("{produceId}",produceId),
@@ -192,23 +199,23 @@ const addProduceMsg = (data) => {
   })
 }
 
-const listProduceProcess = (produceId) => {
+const listProduceProcess = (produceProductId) => {
   return instance({
-    url: api.produce.listProduceProcess.replace("{produceId}",produceId),
+    url: api.produce.listProduceProcess.replace("{produce_product_id}",produceProductId),
     method: 'get'
   })
 }
 
-const listProduceMsg = (produceId) => {
+const listProduceMsg = (produceProductId) => {
   return instance({
-    url: api.produce.listProduceMsg.replace("{produceId}",produceId),
+    url: api.produce.listProduceMsg.replace("{produce_product_id}",produceProductId),
     method: 'get'
   })
 }
 
-const detailProduce = (produceId) => {
+const detailProduceProduct = (produceProductId) => {
   return instance({
-    url: api.produce.detail.replace("{produceId}",produceId),
+    url: api.produce.detail.replace("{produce_product_id}",produceProductId),
     method: 'get'
   })
 }
@@ -237,23 +244,23 @@ const transmitProduce = (data) => {
   })
 }
 
-const getLastProduceProcess = (produceId) => {
+const getLastProduceProcess = (produceProductId) => {
   return instance({
-    url: api.produce.lastProduceProcess.replace("{produceId}",produceId),
+    url: api.produce.lastProduceProcess.replace("{produce_product_id}",produceProductId),
     method: 'get'
   })
 }
 
-const getCurrentProduceProcess = (produceId) => {
+const getCurrentProduceProcess = (produceProductId) => {
   return instance({
-    url: api.produce.currentProduceProcess.replace("{produceId}",produceId),
+    url: api.produce.currentProduceProcess.replace("{produce_product_id}",produceProductId),
     method: 'get'
   })
 }
 
-const getNextProduceProcess = (produceId) => {
+const getNextProduceProcess = (produceProductId) => {
   return instance({
-    url: api.produce.nextProduceProcess.replace("{produceId}",produceId),
+    url: api.produce.nextProduceProcess.replace("{produce_product_id}",produceProductId),
     method: 'get'
   })
 }
@@ -354,11 +361,12 @@ export default {
   pageQryAccount,
   pageQryProduce,
   addProduce,
+  loadProduceProduct,
   deleteProduce,
   addProduceMsg,
   listProduceProcess,
   listProduceMsg,
-  detailProduce,
+  detailProduceProduct,
   acceptProduce,
   rejectProduce,
   transmitProduce,
