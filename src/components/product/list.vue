@@ -103,7 +103,7 @@
         if (this.page.pageNo * this.page.pageSize + this.page.pageSize > this.page.total) {
           Toast("已经是最后一页了！")
         } else {
-          this.page.pageSize = this.page.pageSize + 1
+          this.page.pageNo = this.page.pageNo + 1
           this.loadProduct()
         }
       }

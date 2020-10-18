@@ -5,7 +5,7 @@
       left-text= "返回"
       :right-text= "isCommonUser ? null : '删除'"
       @click-left="onClickLeft"
-      @click-right="deleteProduce"
+      @click-right="showDelete = true"
     />
     <van-list
       v-for="item in produceProductList"
@@ -35,6 +35,20 @@
         </p>
       </div>
     </van-list>
+
+    <van-dialog
+      v-model="showDelete" title="填写原因" show-cancel-button
+      :before-close="beforeDeleteProduce"
+      @close="comment = ''"
+    >
+      <van-field
+        v-model="comment"
+        label="原因"
+        type="textarea"
+        placeholder="请输入原因"
+        autosize
+      />
+    </van-dialog>
   </div>
 </template>
 
@@ -51,6 +65,8 @@
         isCommonUser: true,
         produceId: '',
         produceProductList:[],
+        comment: '',
+        showDelete: false
       }
     },
     computed: {
@@ -67,19 +83,43 @@
       onClickLeft () {
         this.$router.back()
       },
-      deleteProduce () {
-        if (this.isCommonUser) {
-          return
+      beforeDeleteProduce (action, done) {
+        if (action == "confirm") {
+          if (this.isCommonUser) {
+            Toast({
+              message: '对不起，只有超级管理员才能删除！',
+              position: 'top'
+            });
+            return
+          }
+          if (this.comment == "") {
+            Toast({
+              message: "请填写完原因再确认！",
+              position: 'top'
+            })
+            done(false)
+            return
+          }
+          request.deleteProduce(this.produceId, this.comment)
+            .then(res => {
+              if (res.code === 0) {
+                Toast({
+                  message: "删除成功！",
+                  position: 'top'
+                })
+                done(true)
+                this.$router.back()
+              } else {
+                Toast({
+                  message: res.msg,
+                  position: 'top'
+                })
+                done(false)
+              }
+            })
+        } else {
+          done(true)
         }
-        request.deleteProduce(this.produceId)
-          .then(res => {
-            if (res.code === 0) {
-              Toast("删除成功")
-              this.$router.back()
-            } else {
-              Toast.fail(res.msg)
-            }
-          })
       },
       produceProductDetail(produceProductId) {
         this.$router.replace({name: 'produceProductDetail',params: {produceProductId: produceProductId, produceId: this.produceId}})

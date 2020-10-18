@@ -76,18 +76,25 @@
         </div>
       </van-list>
       <van-divider>信息</van-divider>
-      <van-list>
-        <div
-          v-for="item in produceMsg"
+      <van-list v-for="item in produceMsg">
+        <div v-if="item.type !== 5"
           style="border: 1px solid black;padding: 5px;margin-left: 3%;margin-right: 3%;margin-top: 5px">
           <span>{{item.createTime}}</span><br>
           <span style="margin-top: 3px">{{item.content}}</span>
+        </div>
+        <div v-else="item.type === 5"
+             style="border: 1px solid black;padding: 5px;margin-left: 3%;margin-right: 3%;margin-top: 5px">
+          <span >{{item.content}}:
+            <a :href="item.filePath">
+              {{item.filePath}}
+            </a>
+          </span>
         </div>
       </van-list>
 
       <div style="width: 100%;margin-top: 10px;margin-bottom: 10px">
         <van-button color="#1E38FA" size="small" style="margin-left: 3%" @click="addMsg">添加信息</van-button>
-        <van-button color="#1E38FA" size="small" style="margin-left: 3%" @click="onPickFile">传图</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 1.5%" @click="onPickFile">传图</van-button>
         <input
           type="file"
           ref="fileInput"
@@ -95,9 +102,9 @@
           @change="getFile"
           style="display: none"
         >
-        <van-button color="#1E38FA" size="small" style="margin-left: 3%" :disabled="!isEnd" @click="acceptProcess">接受</van-button>
-        <van-button color="#1E38FA" size="small" style="margin-left: 3%" :disabled="!isEnd" @click="rejectProcess">退回</van-button>
-        <van-button color="#1E38FA" size="small" style="margin-left: 3%" :disabled="isEnd" @click="transmitProcess">转交</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 1.5%" :disabled="!isEnd" @click="acceptProcess">接受</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 1.5%" :disabled="!isEnd" @click="rejectProcess">退回</van-button>
+        <van-button color="#1E38FA" size="small" style="margin-left: 1.5%" :disabled="isEnd" @click="transmitProcess">转交</van-button>
       </div>
 
       <van-dialog
@@ -206,11 +213,13 @@
         this.$refs.fileInput.click()
       },
       getFile (event) {
-        console.log('getFile')
         const files = event.target.files
+        if (files[0].size/1024/1024 > 1) { //限制每张上传图片的大小
+          Toast.fail("图片大小不能超过1M！")
+        }
         let filename = files[0].name          //只有一个文件
         if ( filename.lastIndexOf('.') <= 0 ) {
-          return Toast("Please add a valid image!")        //判断图片是否有效
+          return Toast("图片名称无效!")        //判断图片是否有效
         }
         const fileReader = new FileReader()                //内置方法new FileReader()   读取文件
         fileReader.addEventListener('load',() => {
@@ -220,12 +229,10 @@
         this.image = files[0]
         //到这里后, 选择图片就可以显示出来了
         this.onUpload()
-      } ,
+      },
       onUpload () {
-        console.log('onUpload')
         let fd = new FormData()
         fd.append('image',this.image)
-        console.log(this.image)
         request.uploadImage(fd)
           .then(res => {
             if (res.code === 0 && res.data) {

@@ -23,6 +23,14 @@ const listMaterial = (code) => {
     })
 }
 
+const pageQryMaterial = (data) => {
+    return instance({
+        url: api.material.page,
+        method: 'post',
+        data: data
+    })
+}
+
 const listTypes = () => {
   return instance({
     url: api.material.type.options,
@@ -194,10 +202,13 @@ const loadProduceProduct = (produceId) => {
   })
 }
 
-const deleteProduce = (produceId) => {
+const deleteProduce = (produceId, comment) => {
   return instance({
     url: api.produce.delete.replace("{produceId}",produceId),
     method: 'post',
+    params: {
+      comment: comment
+    }
   })
 }
 
@@ -356,6 +367,17 @@ const uploadImage = (image) => {
   })
 }
 
+const downLoadImage = (imageName) => {
+  return instance({
+    url: api.file.downLoadImage,
+    method: 'get',
+    responseType: 'blob',
+    params: {
+      imageName: imageName
+    }
+  })
+}
+
 const pageQryAlarm = (queryParam) => {
   return instance({
     url: api.alarm.pageQry,
@@ -369,6 +391,7 @@ const pageQryAlarm = (queryParam) => {
 export default {
   login,
   listMaterial,
+  pageQryMaterial,
   listTypes,
   addMaterial,
   deleteMaterial,
@@ -412,5 +435,6 @@ export default {
   exChangePriority,
   logout,
   uploadImage,
+  downLoadImage,
   pageQryAlarm
 }

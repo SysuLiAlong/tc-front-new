@@ -28,6 +28,7 @@ export default {
   material: {
     // eslint-disable-next-line camelcase
     list: base_url + 'material/list',
+    page: base_url + 'material/page_qry',
     add: base_url + 'material/add',
     delete: base_url + 'material/delete',
     options: base_url + 'material/options',
@@ -62,6 +63,7 @@ export default {
   },
   file: {
     uploadImage: base_url + 'file/image/upload',
+    downLoadImage: base_url + 'file/image/download',
   },
   alarm: {
     pageQry: base_url + 'alarm/page_qry'

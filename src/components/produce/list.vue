@@ -26,22 +26,35 @@
       </template>
     </van-search>
     <van-list>
-      <div v-for="item in produceList">
-        <p>
+      <van-cell v-for="item in produceList">
+        <div>
+          <p>
           <span
-            style="margin-left: 3%; display: inline-block; width: 40%; color: #1989fa; text-decoration:underline"
+            style="display: inline-block; width: 40%; color: #1989fa; text-decoration:underline"
             @click="produceDetail(item)"
           >
             单号：{{item.code}}
           </span>
-          <span style="margin-left: 1%;margin-right: 3%; display: inline-block; ">
+            <span style="margin-left: 1%;margin-right: 3%; display: inline-block; ">
             订单号：{{item.orderCode}}
           </span>
-          <span style="float: right; margin-right: 3%">
+            <span style="float: right; margin-right: 3%">
             {{item.status ? '已完成' : '未完成'}}
           </span>
-        </p>
-      </div>
+          </p>
+          <p v-if="!item.enabled">
+          <span
+            style="display: inline-block; width: 20%;"
+          >
+            已删除
+          </span>
+            <span style="margin-left: 1%;margin-right: 3%; display: inline-block; ">
+            原因：{{item.comment}}
+          </span>
+
+          </p>
+        </div>
+      </van-cell>
     </van-list>
 
     <div style="width: 100%;margin-top: 10px">

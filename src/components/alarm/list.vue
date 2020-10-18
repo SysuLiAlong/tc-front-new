@@ -9,6 +9,14 @@
       <van-dropdown-item v-model="type" :options="typeList" />
     </van-dropdown-menu>
 
+    <van-list v-for="(item,index) in alarmList">
+      <van-cell>
+        <div>
+          <span style="width: 120px">{{item.produceCode}}</span>
+          <span style="margin-left: 20px">{{item.content}}</span>
+        </div>
+      </van-cell>
+    </van-list>
     <van-cell v-for="(item,index) in alarmList" :title="item.produceCode" :value="item.content"></van-cell>
     <div style="width: 100%;margin-top: 10px">
       <van-button color="#1E38FA" size="small" style="float: left; margin-left: 15%" @click="lastPage">上一页</van-button>
