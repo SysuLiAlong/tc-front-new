@@ -15,7 +15,7 @@
     "build-prod": "node build/build.js --env prod"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "vant": "^2.0.0",
     "vue": "^2.5.2",
     "vue-cookies": "^1.7.0",
